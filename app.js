@@ -12,8 +12,17 @@ const PRICE_SOURCES = [
 const DEFAULT_PACK = {
   steel: 9.5, haft: 6, foundhorseshoe: 3, holynail: 4, brokenrod: 6, ghosthorseshoe: 38, leather: 6,
   linenstrip: 1, suturekit: 2.3, padding: 3.2, hempfibre: 4, flax: 4, hide: 5, noose: 6.5, feather: 7, linen: 10,
-  venison: 2.7,
+  venison: 2.7, hare: 1.9, malt: 1.9, roach: 2, sage: 2, carp: 3, boarmeat: 3.9, eel: 4, pike: 4,
 };
+// the smith's raw goods whose auction "instant" was checked against the packing window
+const INSTANT_CHECKED = new Set(["coal", "ore", "copperore", "logs"]);
+// where a good's pack price comes from: "game" (read off the packing window), "est" (an estimate from the API)
+function packSource(id) {
+  if (DEFAULT_PACK[id] != null || INSTANT_CHECKED.has(id)) return "game";
+  return "est";
+}
+const PACK_SRC_TAG = { game: '<span class="src-tag" title="Число из окна упаковки в игре">игра</span>',
+  est: '<span class="tag na" title="Оценка по данным API: точной цены в грузе сервер не публикует. Посмотрите в игре («Что принести») и впишите своё число">оценка</span>' };
 // level 1 is left out: it levels up quickly and its pieces tell little. Levels where no piece fits the pack are
 // left out too (smithing 9-10: every piece is worth several crates and would mostly burn).
 const MIN_LEVEL = 2, MAX_LEVEL = 10;
@@ -467,7 +476,7 @@ function renderPrices() {
   for (const k of goods) {
     const m = MAT()[k], a = SERVER.auction[m.id] || {}, c = costOf(k);
     g += `<tr><td>${matName(k)}</td><td class="n">${fmt(a.avg, 2)}</td><td class="n">${fmt(a.low, 2)}</td><td class="n">${a.sold != null ? fmt(a.sold, 0) : "—"}</td>
-      <td class="n">${priceInput(k, "buy", serverAuction(m.id))}</td><td class="n">${priceInput(k, "pack", serverPack(m.id))}</td>
+      <td class="n">${priceInput(k, "buy", serverAuction(m.id))}</td><td class="n">${priceInput(k, "pack", serverPack(m.id))} ${num(ov(k).pack) != null ? '<span class="src-tag">ваша</span>' : PACK_SRC_TAG[packSource(m.id)]}</td>
       <td>${modeSelect(k)}</td>
       <td class="n">${fmt(c.v, 2)} <span class="src-tag">${c.src ? SRC[c.src] : ""}</span></td><td>${exclBox(k)}</td></tr>`;
   }
@@ -678,7 +687,7 @@ function renderPricesDialog() {
   for (const x of rows) {
     const pack = serverPack(x.id);
     h += `<tr><td><span class="mn">${iconHtml(iconOf(x.id), x.ru, "ico sm")}<span>${esc(x.ru)}</span></span></td><td class="n">${fmt(num(x.m.price) > 0 ? x.m.price : null, 2)}</td>
-      <td class="n">${fmt(num(x.a.avg) > 0 ? x.a.avg : null, 2)}</td><td class="n">${fmt(num(x.a.low) > 0 ? x.a.low : null, 2)}</td><td class="n">${fmt(pack, 2)}</td>
+      <td class="n">${fmt(num(x.a.avg) > 0 ? x.a.avg : null, 2)}</td><td class="n">${fmt(num(x.a.low) > 0 ? x.a.low : null, 2)}</td><td class="n">${fmt(pack, 2)}${pack != null ? " " + PACK_SRC_TAG[packSource(x.id)] : ""}</td>
       <td class="n">${x.a.qty != null ? fmt(x.a.qty, 0) : "—"}</td><td class="n">${x.a.sold != null ? fmt(x.a.sold, 0) : "—"}</td></tr>`;
   }
   if (!rows.length) h += `<tr><td colspan="7" class="src-tag">Ничего не найдено.</td></tr>`;
