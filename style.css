@@ -138,3 +138,4 @@ dialog::backdrop { background: rgba(0,0,0,.6); }
 .stale-btn { margin-left: 8px; font-size: 15px; }
 .no-pack { display: block; margin: 6px 0; }
 p.no-pack { margin: 0 0 12px; }
+[hidden] { display: none !important; }
