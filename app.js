@@ -14,7 +14,7 @@ const DEFAULT_PACK = { steel: 9.5, haft: 6, foundhorseshoe: 3, holynail: 4, brok
 const MAX_LEVEL = 8;
 const STORE = "kcdrp-smith-v1";
 const DEFAULTS = {
-  buySource: "avg", cap: 450, filler: "coal", ov: {}, excl: [], level: "all", search: "",
+  buySource: "avg", cap: 450, packFee: 25, filler: "coal", ov: {}, excl: [], level: "all", search: "",
   onlyFit: false, hideNA: true, hideParts: false, sort: { key: "eff", dir: -1 }, cart: [], tab: "items",
 };
 
@@ -177,17 +177,31 @@ function evaluate(r, fill) {
   const M = recipeCost(r), P = recipePack(r);
   const res = { r, M, P, eff: M && P != null ? P / M : null, loss: M != null && P != null ? M - P : null };
   if (M == null || P == null || P <= 0) { res.na = true; return res; }
-  const cap = S.cap;
+  const cap = S.cap, fee = packFee();
   if (P > cap + 1e-9) {
-    Object.assign(res, { fits: false, k: 1, n: 0, burn: P - cap, crate: M - cap });
+    Object.assign(res, { fits: false, k: 1, n: 0, burn: P - cap, cost: M + fee, worth: cap });
   } else {
     const k = Math.floor(cap / P + 1e-9);
     const rest = cap - k * P;
     let n = 0, cost = k * M, value = k * P;
     if (fill && rest > 1e-9) { n = Math.ceil(rest / fill.pack - 1e-9); cost += n * fill.cost; value += n * fill.pack; }
-    Object.assign(res, { fits: true, k, n, crate: cost - Math.min(cap, value), unfilled: Math.max(0, cap - value) });
+    Object.assign(res, { fits: true, k, n, cost: cost + fee, worth: Math.min(cap, value), unfilled: Math.max(0, cap - value) });
   }
+  res.crate = res.cost - res.worth;      // what you pay above the crate's worth, packing included
+  res.sellAt = res.cost;                 // the sale that pays it all back
   return res;
+}
+const packFee = () => (num(S.packFee) != null && S.packFee >= 0 ? S.packFee : 25);
+// a crate sells for its worth + 25 gr a km (in a straight line, at an ordinary need, fresh), 150 gr at most
+const GAIN_PER_KM = 25, GAIN_MAX = 150;
+function sellAtHtml(cost, worth) {
+  if (cost == null) return "—";
+  const need = cost - worth;
+  let sub;
+  if (need <= 0.05) sub = "окупится в любом городе";
+  else if (need > GAIN_MAX) sub = `+${fmt(need, 0)} — больше, чем даёт любой путь (до ${GAIN_MAX})`;
+  else sub = `+${fmt(need, 0)} · ≈ ${fmt(need / GAIN_PER_KM, 1)} км`;
+  return `${fmt(cost, 0)} гр.<span class="en">${sub}</span>`;
 }
 
 // ---------------------------------------------------------------- render
@@ -229,6 +243,7 @@ const COLS = [
   { key: "loss", t: "Потеря за шт.", n: true, v: (x) => x.loss },
   { key: "crateTxt", t: "В ящик", sortless: true },
   { key: "crate", t: "Потеря ящика", n: true, v: (x) => x.crate },
+  { key: "sellAt", t: "Продать ящик от", n: true, v: (x) => x.sellAt },
 ];
 
 function render() {
@@ -239,17 +254,17 @@ function render() {
   for (const x of all) x.excluded = [...usedBy(x.r)].some((k) => excl.has(k));
 
   // best per level
-  let bh = "<tr><th></th><th>Ур.</th><th>Предмет</th><th class='n'>Себестоимость</th><th class='n'>В груз</th><th class='n'>КПД</th><th class='n'>Потеря за шт.</th><th>Ящик</th><th class='n'>Потеря ящика</th></tr>";
+  let bh = "<tr><th></th><th>Ур.</th><th>Предмет</th><th class='n'>Себестоимость</th><th class='n'>В груз</th><th class='n'>КПД</th><th class='n'>Потеря за шт.</th><th>Ящик</th><th class='n'>Потеря ящика</th><th class='n'>Продать ящик от</th></tr>";
   for (let L = 1; L <= MAX_LEVEL; L++) {
     const c = all.filter((x) => x.r.level === L && !x.na && x.fits && !x.excluded && !x.r.en.startsWith("jobtool"));
-    if (!c.length) { bh += `<tr class="na"><td></td><td class="n">${L}</td><td colspan="7">ни один доступный предмет не помещается в ящик</td></tr>`; continue; }
+    if (!c.length) { bh += `<tr class="na"><td></td><td class="n">${L}</td><td colspan="8">ни один доступный предмет не помещается в ящик</td></tr>`; continue; }
     c.sort((a, b) => b.eff - a.eff || b.P - a.P);
     const x = c[0];
-    bh += `<tr><td>${addBtn(x)}</td><td class="n">${L}</td><td>${nameCell(x.r)}</td><td class="n">${fmt(x.M)}</td><td class="n">${fmt(x.P)}</td><td class="n ${effClass(x.eff)}">${fmt(x.eff * 100)}%</td><td class="n">${fmt(x.loss)}</td><td>${crateText(x)}</td><td class="n">${fmt(x.crate)}</td></tr>`;
+    bh += `<tr><td>${addBtn(x)}</td><td class="n">${L}</td><td>${nameCell(x.r)}</td><td class="n">${fmt(x.M)}</td><td class="n">${fmt(x.P)}</td><td class="n ${effClass(x.eff)}">${fmt(x.eff * 100)}%</td><td class="n">${fmt(x.loss)}</td><td>${crateText(x)}</td><td class="n">${fmt(x.crate)}</td><td class="n">${sellAtHtml(x.sellAt, x.worth)}</td></tr>`;
   }
   if (fill) {
-    const nb = Math.ceil(S.cap / fill.pack - 1e-9);
-    bh += `<tr><td></td><td></td><td colspan="7" class="src-tag">Для сравнения: ящик из одного товара «${esc(MAT()[fill.key].ru)}» — ${nb} шт., потеря ${fmt(nb * fill.cost - S.cap)} гр.</td></tr>`;
+    const nb = Math.ceil(S.cap / fill.pack - 1e-9), fc = nb * fill.cost + packFee();
+    bh += `<tr><td></td><td></td><td colspan="8" class="src-tag">Для сравнения: ящик из одного товара «${esc(MAT()[fill.key].ru)}» — ${nb} шт., потеря ${fmt(fc - S.cap)} гр. с упаковкой, продать от ${fmt(fc, 0)} гр.</td></tr>`;
   }
   $("best").innerHTML = bh;
 
@@ -275,7 +290,7 @@ function render() {
       <td>${addBtn(x)}</td><td class="n">${x.r.level}</td><td>${nameCell(x.r, na)}</td><td class="mats">${esc(matsText(x.r))}</td>
       <td class="n">${fmt(x.r.fee / x.r.yield)}</td><td class="n">${fmt(x.M)}</td><td class="n">${fmt(x.P)}</td>
       <td class="n ${effClass(x.eff)}">${x.eff != null ? fmt(x.eff * 100) + "%" : "—"}</td><td class="n">${fmt(x.loss)}</td>
-      <td>${crateText(x)}</td><td class="n">${fmt(x.crate)}</td></tr>`;
+      <td>${crateText(x)}</td><td class="n">${fmt(x.crate)}</td><td class="n">${x.na ? "—" : sellAtHtml(x.sellAt, x.worth)}</td></tr>`;
     if (open.has(x.r.id)) h += `<tr class="detail"><td></td><td></td><td colspan="${COLS.length - 1}">${breakdown(x.r)}</td></tr>`;
   }
   if (!rows.length) h += `<tr><td colspan="${COLS.length + 1}" class="src-tag">Нет рецептов под эти фильтры.</td></tr>`;
@@ -395,7 +410,8 @@ function cartPlan(fill) {
       const items = Math.min(per, left), value = items * x.P;
       let fillN = 0;
       if (x.fits && fill && cap - value > 1e-9) fillN = Math.ceil((cap - value) / fill.pack - 1e-9);
-      crates.push({ id: l.id, r, items, fill: fillN, value: Math.min(cap, value + fillN * (fill ? fill.pack : 0)), burn: x.fits ? 0 : value - cap });
+      crates.push({ id: l.id, r, items, fill: fillN, value: Math.min(cap, value + fillN * (fill ? fill.pack : 0)), burn: x.fits ? 0 : value - cap,
+        cost: items * x.M + (fill ? fillN * fill.cost : 0) + packFee() });
     }
   }
   // expand the materials you make yourself, deepest first
@@ -421,8 +437,10 @@ function cartPlan(fill) {
   let cost = fees;
   for (const b of buy) cost += b.c.v != null ? b.c.v * b.q : 0;
   if (fill) cost += fillTotal * fill.cost;
+  const packing = crates.length * packFee();
+  cost += packing;
   const value = crates.reduce((t, c) => t + c.value, 0);
-  return { lines, crates, crafts, buy, fees, fillTotal, cost, value, missing };
+  return { lines, crates, crafts, buy, fees, fillTotal, packing, cost, value, missing };
 }
 
 function renderCart(fill) {
@@ -464,19 +482,22 @@ function renderCart(fill) {
     const inRec = (p.buy.find((b) => b.k === fk) || {}).q || 0;
     if (inRec) h += `<tr class="total"><td>${esc(MAT()[fk].ru)} всего</td><td class="n">${fmt(inRec + p.fillTotal, 2)}</td><td colspan="3"></td></tr>`;
   }
-  h += `<tr><td>Плата станков</td><td></td><td></td><td></td><td class="n">${fmt(p.fees)}</td></tr></table>`;
+  h += `<tr><td>Плата станков</td><td></td><td></td><td></td><td class="n">${fmt(p.fees)}</td></tr>`;
+  if (p.crates.length) h += `<tr><td>Упаковка ящиков</td><td class="n">${p.crates.length}</td><td></td><td class="n">${fmt(packFee())}</td><td class="n">${fmt(p.packing)}</td></tr>`;
+  h += `</table>`;
   // totals
   const loss = p.cost - p.value;
   h += `<table class="sub-table totals"><tr><td>Ящиков</td><td class="n">${p.crates.length}</td></tr>
     <tr><td>Потратите всего</td><td class="n">${fmt(p.cost)} гр.</td></tr>
     <tr><td>Засчитается в грузы</td><td class="n">${fmt(p.value)} гр.</td></tr>
-    <tr><td>Потеря</td><td class="n ${loss > 0.5 ? "bad" : "good"}">${fmt(loss)} гр.</td></tr></table>`;
+    <tr><td>Потеря без учёта прибыли с дороги</td><td class="n ${loss > 0.5 ? "bad" : "good"}">${fmt(loss)} гр.</td></tr>
+    <tr><td>Продать все ящики минимум за</td><td class="n">${fmt(p.cost, 0)} гр.</td></tr></table>`;
   if (p.missing.length) h += `<p class="hint bad">Нет цены для: ${esc(p.missing.join(", "))} — они не посчитаны.</p>`;
   h += `</div></div>`;
   // crates
   h += `<h3>По ящикам</h3><ol class="crates">`;
   p.crates.forEach((c, i) => {
-    h += `<li><button type="button" class="crate-del" data-crdel="${esc(c.id)}" data-items="${c.items}" title="Убрать этот ящик">×</button><span class="crate-no">${i + 1}.</span> ${esc(c.r.ru || c.r.en)} ×${c.items}${c.fill ? ` + ${esc(fname)} ×${c.fill}` : ""} — ${fmt(c.value)} гр.${c.burn > 0 ? ` <span class="tag burn">сгорит ${fmt(c.burn, 0)}</span>` : ""}</li>`;
+    h += `<li><button type="button" class="crate-del" data-crdel="${esc(c.id)}" data-items="${c.items}" title="Убрать этот ящик">×</button><span class="crate-no">${i + 1}.</span> ${esc(c.r.ru || c.r.en)} ×${c.items}${c.fill ? ` + ${esc(fname)} ×${c.fill}` : ""} — ${fmt(c.value)} гр. в грузе, <b>продать от ${fmt(c.cost, 0)}</b> <span class="src-tag">(${c.cost - c.value > GAIN_MAX ? `+${fmt(c.cost - c.value, 0)}, дорога столько не даст` : `+${fmt(Math.max(0, c.cost - c.value), 0)} ≈ ${fmt(Math.max(0, c.cost - c.value) / GAIN_PER_KM, 1)} км`})</span>${c.burn > 0 ? ` <span class="tag burn">сгорит ${fmt(c.burn, 0)}</span>` : ""}</li>`;
   });
   h += `</ol><p class="cart-actions"><button type="button" id="cartCopy">Скопировать список</button> <button type="button" class="ghost" id="cartClear">Очистить корзину</button> <span id="cartMsg" class="src-tag"></span></p>`;
   box.innerHTML = h;
@@ -492,9 +513,9 @@ function cartText(p, fill) {
   L.push("Взять:");
   for (const b of p.buy) L.push(`  ${MAT()[b.k].ru}${b.k === fk ? " (в рецепты)" : ""} — ${fmt(b.q, 2)}`);
   if (fill && p.fillTotal) L.push(`  ${MAT()[fk].ru} (добивка) — ${p.fillTotal}`);
-  L.push(`Плата станков: ${fmt(p.fees)} гр. · Потратите: ${fmt(p.cost)} гр. · Ящиков: ${p.crates.length}`);
+  L.push(`Плата станков: ${fmt(p.fees)} гр. · Упаковка: ${fmt(p.packing)} гр. · Потратите: ${fmt(p.cost)} гр. · Ящиков: ${p.crates.length}`);
   L.push("По ящикам:");
-  p.crates.forEach((c, i) => L.push(`  ${i + 1}. ${c.r.ru || c.r.en} ×${c.items}${c.fill ? ` + ${MAT()[fk].ru.toLowerCase()} ×${c.fill}` : ""}`));
+  p.crates.forEach((c, i) => L.push(`  ${i + 1}. ${c.r.ru || c.r.en} ×${c.items}${c.fill ? ` + ${MAT()[fk].ru.toLowerCase()} ×${c.fill}` : ""} — продать от ${fmt(c.cost, 0)} гр.`));
   return L.join("\n");
 }
 
@@ -552,6 +573,7 @@ function bind() {
   $("cartCount").onclick = () => showTab("items");
   $("buySource").value = S.buySource;
   $("cap").value = S.cap;
+  $("packFee").value = packFee();
   $("search").value = S.search;
   $("onlyFit").checked = S.onlyFit;
   $("hideNA").checked = S.hideNA;
@@ -567,6 +589,7 @@ function bind() {
   const set = (k, v) => { S[k] = v; save(); render(); };
   $("buySource").onchange = (e) => set("buySource", e.target.value);
   $("cap").onchange = (e) => set("cap", Math.max(1, +e.target.value || 450));
+  $("packFee").onchange = (e) => set("packFee", Math.max(0, +e.target.value || 0));
   $("filler").onchange = (e) => set("filler", e.target.value);
   $("search").oninput = (e) => set("search", e.target.value);
   $("onlyFit").onchange = (e) => set("onlyFit", e.target.checked);
