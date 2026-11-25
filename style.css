@@ -128,3 +128,5 @@ dialog::backdrop { background: rgba(0,0,0,.6); }
 .craft-select option { font: 16px system-ui, sans-serif; color: var(--text); background: var(--panel); }
 .pack-info { color: var(--text); margin: -4px 0 0; font-size: 14px; }
 .pack-info .en { font-size: 12px; }
+.na-hint { background: var(--panel); border: 1px solid #5a4630; border-radius: 8px; padding: 8px 12px; color: var(--text); }
+.na-hint button { margin-left: 6px; }

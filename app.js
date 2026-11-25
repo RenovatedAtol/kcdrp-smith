@@ -129,10 +129,14 @@ function auctionPrice(key) {
   if (m.kind === "good") return serverAuction(m.id);
   return m.auctionItem ? serverAuction(m.auctionItem) : null;   // a game item on sale (Comfrey, Chicken, Egg...)
 }
+// wild herbs and mushrooms anyone picks by hand (wiki "Gathering"): not sold, so not in the realm's data
+const WILD = ["mint", "valerian", "eyebright", "St John's wort", "marigold", "poppy", "comfrey", "thistle", "dandelion",
+  "wormwood", "feverfew", "Boletus edulis", "Lepiota"];
 function packPrice(key) {
   const m = MAT()[key], o = ov(key);
   if (num(o.pack) != null) return o.pack;
   if (m.kind === "good") return serverPack(m.id);
+  if (o.mode === "self") return 0;                      // picked yourself: what the server counts it at is unknown
   if (m.kind === "manual") return auctionPrice(key);   // unknown: assume it counts at what you paid
   return null;                                          // a craft's part: from its recipe
 }
@@ -149,6 +153,7 @@ function costOf(key, depth = 0) {
   const opts = [];
   memoCost.set(key, { v: null, src: null });   // a guard against recipes that loop back
   const m = MAT()[key], a = auctionPrice(key);
+  if (mode === "self") opts.push({ v: 0, src: "self" });
   if ((mode === "auto" || mode === "auction") && a != null)
     opts.push({ v: a, src: m.kind === "good" || (m.auctionItem && num(ov(key).buy) == null) ? "auction" : "price" });
   if ((mode === "auto" || mode === "craft") && m.recipe) {
@@ -240,6 +245,8 @@ function evaluate(r, fill, cap = capOf(r.craft)) {
   // levels 5+ count the bench fee twice by assumption only, unless the player typed the game's value
   res.guess = r.fee > 0 && FEE_IN_PACK(r.level) > 1 && (r.level >= 5 || r.craft !== "smithing") && num(S.itemPack && S.itemPack[r.id]) == null;
   res.fillKey = fill ? fill.key : null;
+  res.selfPicked = [...usedBy(r)].some((k) => ov(k).mode === "self" && num(ov(k).pack) == null);
+  if (res.selfPicked) res.guess = true;
   if (M == null || P == null || P <= 0) { res.na = true; return res; }
   const fee = packFee();
   if (P > cap + 1e-9) {
@@ -369,6 +376,20 @@ function render() {
   if (!rows.length) h += `<tr><td colspan="${COLS.length + 1}" class="src-tag">Нет рецептов под эти фильтры.</td></tr>`;
   $("recipes").innerHTML = h;
 
+  // recipes hidden for want of a price, and the materials to blame
+  const hidden = all.filter((x) => x.na && !x.excluded);
+  let hint = "";
+  if (hidden.length) {
+    const miss = new Map();
+    for (const x of hidden) for (const k of usedBy(x.r)) if (costOf(k).v == null && !(MAT()[k].recipe)) miss.set(k, (miss.get(k) || 0) + 1);
+    const list = [...miss.entries()].sort((a, b) => b[1] - a[1]);
+    const wild = list.filter(([k]) => WILD.includes(k) && ov(k).mode !== "self");
+    hint = `<b>${hidden.length} рецепт(ов) без цены</b>${S.hideNA ? " скрыто" : ""}: нет цены на ${esc(list.slice(0, 10).map(([k]) => MAT()[k].ru.toLowerCase()).join(", "))}${list.length > 10 ? "…" : ""}. ` +
+      `Впишите цены на вкладке «Материалы и цены»${S.hideNA ? " или снимите галочку «скрыть недоступные»" : ""}.` +
+      (wild.length ? ` <button type="button" id="wildSelf">Дикие травы — собираю сам (0 гр.)</button>` : "");
+  }
+  $("naHint").innerHTML = hint;
+  $("naHint").hidden = !hint;
   $("excluded").innerHTML = S.excl.filter((k) => used.has(k)).map((k) => `<span class="chip x" data-k="${esc(k)}">${esc(MAT()[k] ? MAT()[k].ru : k)}</span>`).join("");
   renderPrices();
   renderCart();
@@ -400,7 +421,7 @@ function renderHead(C, cap, fill, levels) {
   $("filler").value = auto ? "__auto" : S.fillers[C.id];
 }
 
-const SRC = { auction: "аукцион", craft: "сделать", price: "ваша цена" };
+const SRC = { auction: "аукцион", craft: "сделать", price: "ваша цена", self: "собрать самому" };
 
 function breakdown(r) {
   let h = `<table class="sub-table"><tr><th>Материал</th><th class="n">Кол-во</th><th>Откуда</th><th class="n">Цена за шт.</th><th class="n">Себестоимость</th><th class="n">В груз за шт.</th><th class="n">В груз</th></tr>`;
@@ -428,6 +449,7 @@ function modeSelect(key) {
   if (m.kind !== "part") o.push(["auction", m.kind === "good" ? "аукцион" : "по цене"]);
   if (m.recipe) o.push(["craft", "сделать"]);
   if (m.kind === "part") o.push(["auction", "купить по цене"]);
+  if (m.kind === "manual") o.push(["self", "собрать самому (0 гр.)"]);
   return `<select data-k="${esc(key)}" data-f="mode">${o.map(([v, t]) => `<option value="${v}"${v === cur ? " selected" : ""}>${t}</option>`).join("")}</select>`;
 }
 function exclBox(key) { return `<input type="checkbox" data-k="${esc(key)}" data-f="excl"${S.excl.includes(key) ? " checked" : ""}>`; }
@@ -845,6 +867,11 @@ function bind() {
   };
   const onAdd = (e) => { const b = e.target.closest("button[data-add]"); if (b) { addToCart(b.dataset.add); return true; } return false; };
   $("best").onclick = (e) => { onAdd(e); };
+  $("naHint").onclick = (e) => {
+    if (e.target.id !== "wildSelf") return;
+    for (const k of WILD) if (MAT()[k]) S.ov[k] = Object.assign({}, S.ov[k], { mode: "self" });
+    save(); render();
+  };
   $("cart").addEventListener("change", (e) => {
     const id = e.target.dataset.cq;
     if (id == null) return;
