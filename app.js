@@ -4,8 +4,8 @@
 const PRICE_SOURCES = [
   // our own copy, refreshed every 30 minutes by .github/workflows/prices.yml
   { url: "https://raw.githubusercontent.com/RenovatedAtol/kcdrp-smith/prices/prices.json", kind: "own", label: "API сервера" },
-  // fallback: DanekKuznec's hourly copy of the auction (no realm prices in it)
-  { url: "https://raw.githubusercontent.com/DanekKuznec/kcd2-rp-crafting/prices/auction.json", kind: "danek", label: "копия DanekKuznec (без цен казны)" },
+  // fallback: DanekKuznec's hourly copy of the auction (no market prices in it)
+  { url: "https://raw.githubusercontent.com/DanekKuznec/kcd2-rp-crafting/prices/auction.json", kind: "danek", label: "копия аукциона DanekKuznec" },
 ];
 // pack prices of goods the auction has no "instant" figure for, read off the game's packing windows
 // (2026-11-25). The API has no exact pack price: "instant" matches the smith's raw goods, not all goods.
@@ -84,7 +84,6 @@ function serverAuction(id) {
   for (const f of order) if (num(a[f]) > 0) return a[f];
   return null;
 }
-const serverRealm = (id) => (num((SERVER.market[id] || {}).buy) > 0 ? SERVER.market[id].buy : null);
 function serverPack(id) {
   const a = SERVER.auction[id];
   if (a && num(a.instant) > 0) return a.instant;
@@ -92,16 +91,11 @@ function serverPack(id) {
   const m = SERVER.market[id];
   return m && num(m.price) > 0 ? m.price : null;
 }
-// the three prices of a material: the user's number wins over the server's
+// the prices of a material: the user's number wins over the server's
 function auctionPrice(key) {
   const m = MAT()[key], o = ov(key);
   if (num(o.buy) != null) return o.buy > 0 ? o.buy : null;
   return m.kind === "good" ? serverAuction(m.id) : null;
-}
-function realmPrice(key) {
-  const m = MAT()[key], o = ov(key);
-  if (num(o.realm) != null) return o.realm > 0 ? o.realm : null;
-  return m.kind === "good" ? serverRealm(m.id) : null;
 }
 function packPrice(key) {
   const m = MAT()[key], o = ov(key);
@@ -118,11 +112,11 @@ function resetMemo() { memoCost = new Map(); memoPack = new Map(); }
 function costOf(key, depth = 0) {
   if (memoCost.has(key)) return memoCost.get(key);
   if (depth > 12) return { v: null, src: null };
-  const mode = ov(key).mode || "auto";
+  let mode = ov(key).mode || "auto";
+  if (mode === "realm") mode = "auto";   // crown prices are not used any more (older saved settings)
   const opts = [];
-  const a = auctionPrice(key), r = realmPrice(key), rec = MAT()[key].recipe ? recipeOf(key) : null;
+  const a = auctionPrice(key), rec = MAT()[key].recipe ? recipeOf(key) : null;
   if ((mode === "auto" || mode === "auction") && a != null) opts.push({ v: a, src: MAT()[key].kind === "good" ? "auction" : "price" });
-  if ((mode === "auto" || mode === "realm") && r != null) opts.push({ v: r, src: "realm" });
   if ((mode === "auto" || mode === "craft") && rec) {
     const c = recipeCost(rec, depth + 1);
     if (c != null) opts.push({ v: c, src: "craft" });
@@ -175,8 +169,7 @@ function filler() {
   if (!key || !MAT()[key]) return null;
   const c = costOf(key);
   if (c.v == null) return null;
-  // a good bought from the realm and packed as it is pays back what was paid
-  const p = c.src === "realm" ? c.v : packOf(key);
+  const p = packOf(key);
   return p > 0 ? { key, cost: c.v, pack: p } : null;
 }
 
@@ -293,7 +286,7 @@ function render() {
   renderCart(fill);
 }
 
-const SRC = { auction: "аукцион", realm: "казна", craft: "сделать", price: "ваша цена" };
+const SRC = { auction: "аукцион", craft: "сделать", price: "ваша цена" };
 
 function breakdown(r) {
   let h = `<table class="sub-table"><tr><th>Материал</th><th class="n">Кол-во</th><th>Откуда</th><th class="n">Цена за шт.</th><th class="n">Себестоимость</th><th class="n">В груз за шт.</th><th class="n">В груз</th></tr>`;
@@ -315,7 +308,6 @@ function modeSelect(key) {
   const m = MAT()[key], cur = ov(key).mode || "auto";
   const o = [["auto", "авто"]];
   if (m.kind !== "part") o.push(["auction", m.kind === "good" ? "аукцион" : "по цене"]);
-  if (m.kind === "good") o.push(["realm", "казна"]);
   if (m.recipe) o.push(["craft", "сделать"]);
   if (m.kind === "part") o.push(["auction", "купить по цене"]);
   return `<select data-k="${esc(key)}" data-f="mode">${o.map(([v, t]) => `<option value="${v}"${v === cur ? " selected" : ""}>${t}</option>`).join("")}</select>`;
@@ -327,12 +319,12 @@ function renderPrices() {
   const goods = keys.filter((k) => MAT()[k].kind === "good");
   const parts = keys.filter((k) => MAT()[k].kind === "part");
   const manual = keys.filter((k) => MAT()[k].kind === "manual");
-  let g = `<tr><th>Товар</th><th class="n">Аукцион ср.</th><th class="n">Аукцион мин.</th><th class="n">Продано</th><th class="n">Покупка</th><th class="n">В груз</th><th class="n">Казна</th><th>Способ</th><th class="n">Итого за шт.</th><th>искл.</th></tr>`;
+  let g = `<tr><th>Товар</th><th class="n">Аукцион ср.</th><th class="n">Аукцион мин.</th><th class="n">Продано</th><th class="n">Покупка</th><th class="n">В груз</th><th>Способ</th><th class="n">Итого за шт.</th><th>искл.</th></tr>`;
   for (const k of goods) {
     const m = MAT()[k], a = SERVER.auction[m.id] || {}, c = costOf(k);
     g += `<tr><td>${matName(k)}</td><td class="n">${fmt(a.avg, 2)}</td><td class="n">${fmt(a.low, 2)}</td><td class="n">${a.sold != null ? fmt(a.sold, 0) : "—"}</td>
       <td class="n">${priceInput(k, "buy", serverAuction(m.id))}</td><td class="n">${priceInput(k, "pack", serverPack(m.id))}</td>
-      <td class="n">${priceInput(k, "realm", serverRealm(m.id))}</td><td>${modeSelect(k)}</td>
+      <td>${modeSelect(k)}</td>
       <td class="n">${fmt(c.v, 2)} <span class="src-tag">${c.src ? SRC[c.src] : ""}</span></td><td>${exclBox(k)}</td></tr>`;
   }
   $("goods").innerHTML = g;
@@ -507,7 +499,7 @@ function cartText(p, fill) {
 }
 
 
-// ---------------------------------------------------------------- crown and market prices window
+// ---------------------------------------------------------------- market prices window
 function renderPricesDialog() {
   const q = $("pricesSearch").value.trim().toLowerCase();
   const smith = $("pricesSmith").checked;
@@ -523,19 +515,17 @@ function renderPricesDialog() {
   let rows = [...ids].map((id) => ({ id, ru: ruOf(id), m: SERVER.market[id] || {}, a: SERVER.auction[id] || {} }))
     .filter((x) => (!smith || smithIds.has(x.id)) && (!q || x.ru.toLowerCase().includes(q) || x.id.includes(q)))
     .sort((x, y) => x.ru.localeCompare(y.ru, "ru"));
-  let h = `<tr><th>Товар</th><th class="n">Корона продаёт</th><th class="n">Рыночная цена</th><th class="n">Аукцион ср.</th><th class="n">Аукцион мин.</th><th class="n">В груз*</th><th class="n">Выставлено</th><th class="n">Продано</th></tr>`;
+  let h = `<tr><th>Товар</th><th class="n">Рыночная цена</th><th class="n">Аукцион ср.</th><th class="n">Аукцион мин.</th><th class="n">В груз*</th><th class="n">Выставлено</th><th class="n">Продано</th></tr>`;
   for (const x of rows) {
     const pack = serverPack(x.id);
-    h += `<tr><td><span class="mn">${iconHtml(iconOf(x.id), x.ru, "ico sm")}<span>${esc(x.ru)}</span></span></td><td class="n">${fmt(num(x.m.buy) > 0 ? x.m.buy : null, 2)}</td><td class="n">${fmt(num(x.m.price) > 0 ? x.m.price : null, 2)}</td>
+    h += `<tr><td><span class="mn">${iconHtml(iconOf(x.id), x.ru, "ico sm")}<span>${esc(x.ru)}</span></span></td><td class="n">${fmt(num(x.m.price) > 0 ? x.m.price : null, 2)}</td>
       <td class="n">${fmt(num(x.a.avg) > 0 ? x.a.avg : null, 2)}</td><td class="n">${fmt(num(x.a.low) > 0 ? x.a.low : null, 2)}</td><td class="n">${fmt(pack, 2)}</td>
       <td class="n">${x.a.qty != null ? fmt(x.a.qty, 0) : "—"}</td><td class="n">${x.a.sold != null ? fmt(x.a.sold, 0) : "—"}</td></tr>`;
   }
-  if (!rows.length) h += `<tr><td colspan="8" class="src-tag">Ничего не найдено.</td></tr>`;
+  if (!rows.length) h += `<tr><td colspan="7" class="src-tag">Ничего не найдено.</td></tr>`;
   $("pricesTable").innerHTML = h;
-  const noCrown = !Object.keys(SERVER.market).length;
   $("pricesInfo").innerHTML = (SERVER.updated ? `Данные сервера от ${new Date(SERVER.updated).toLocaleString("ru-RU")} · ${esc(SERVER.label)}. ` : "Цены сервера не загружены. ") +
-    (noCrown ? '<b>Цен короны в этом источнике нет.</b> ' : "") +
-    "<b>«Корона продаёт»</b> — сколько вы платите, покупая товар у королевства. <b>«В груз»</b> — сколько одна штука засчитывается в стоимость торгового ящика. " +
+    "<b>«Аукцион»</b> — цены игроков (средняя за неделю и самая низкая сейчас). <b>«Рыночная цена»</b> — оценка сервера, как он её считает, не описано. <b>«В груз»</b> — сколько одна штука засчитывается в стоимость торгового ящика. " +
     "* Точной цены в грузе API сервера не даёт: здесь оценка (поле <code>instant</code> аукциона или значение из окна упаковки, иначе рыночная цена). " +
     "Для кузнечного сырья она совпадает с игрой, для товаров других ремёсел может отличаться — точное число видно в окне упаковки («Что принести»). «—» — нет данных. Цены сервера без ваших правок.";
 }
