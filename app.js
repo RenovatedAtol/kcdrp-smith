@@ -9,9 +9,10 @@ const PRICE_SOURCES = [
 ];
 // pack prices read off the game's packing windows (2026-11-25): the API has no exact pack price, and the auction's
 // "instant" (the crown's Sell-now price) matches the smith's raw goods but not the tailor's. These win over it.
+// They move with the auction: steel was 9.5 in the morning and 8 by evening, padding 3.2 then 3.8 - latest kept.
 const DEFAULT_PACK = {
-  steel: 9.5, haft: 6, foundhorseshoe: 3, holynail: 4, brokenrod: 6, ghosthorseshoe: 38, leather: 6,
-  linenstrip: 1, suturekit: 2.3, padding: 3.2, hempfibre: 4, flax: 4, hide: 5, noose: 6.5, feather: 7, linen: 10,
+  steel: 8, haft: 6, foundhorseshoe: 3, holynail: 4, brokenrod: 6, ghosthorseshoe: 38, leather: 6,
+  linenstrip: 1, suturekit: 2.3, padding: 3.8, hempfibre: 4, flax: 4, hide: 5, noose: 6.5, feather: 7, linen: 10,
   venison: 2.7, hare: 1.9, malt: 1.9, roach: 2, sage: 2, carp: 3, boarmeat: 3.9, eel: 4, pike: 4,
 };
 // the smith's raw goods whose auction "instant" was checked against the packing window
