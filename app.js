@@ -625,16 +625,14 @@ function renderRoute(fill) {
   rows.sort(better);
 
   const coalCost = fill ? Math.ceil(S.cap / fill.pack - 1e-9) * fill.cost + packFee() : null;
-  // the three best routes from the chosen town, and from any town that keeps a warehouse
-  const fromHere = rows.filter((x) => x.ok).slice(0, 3);
+  // the three best routes between any two towns that keep a warehouse
   const all = [];
   for (const a of towns) {
     if (!a.lv || a.lv.every((v) => !v)) continue;
     for (const b of towns) { const x = routeEval(a, b, k, cut, plan, crates); if (x.ok) all.push(x); }
   }
   all.sort(better);
-  $("routeBest").innerHTML = routeCard(`Лучшие 3 из города «${esc(townRu(o.name))}»`, fromHere, coalCost, hasCart) +
-    routeCard("Лучшие 3 из любого города", all.slice(0, 3), coalCost, hasCart);
+  $("routeBest").innerHTML = routeCard("Лучшие 3 маршрута", all.slice(0, 3), coalCost, hasCart);
   let h = `<tr><th>Город</th><th class="n">Расстояние</th><th class="n">Склад «${esc(STOCKS[k])}»</th><th class="n">Нужда ≈</th><th class="n">Прибыль с дороги за ящик</th><th class="n">Заплатят за полный ящик</th>`;
   if (coalCost != null) h += `<th class="n">Ящик угля: итог</th>`;
   if (hasCart) h += `<th class="n">Ваша корзина (${crates.length} ящ.): итог</th>`;
