@@ -4,7 +4,7 @@ name: prices
 # so this copies the prices into the "prices" branch, which the page reads.
 on:
   schedule:
-    - cron: "7,37 * * * *"   # every 30 minutes
+    - cron: "17,47 * * * *"   # every 30 minutes
   workflow_dispatch:
 
 permissions:
