@@ -120,3 +120,11 @@ dialog::backdrop { background: rgba(0,0,0,.6); }
 .rb-nums { display: block; font-size: 13px; margin-top: 2px; }
 .item-pack { color: var(--dim); }
 .item-pack input { width: 80px; }
+
+/* craft selector in the title */
+.craft-select { font: inherit; color: var(--gold); background: transparent; border: none; border-bottom: 2px dashed #7a5f3c;
+  border-radius: 0; padding: 0 4px; cursor: pointer; }
+.craft-select:hover, .craft-select:focus { background: var(--panel); outline: none; }
+.craft-select option { font: 16px system-ui, sans-serif; color: var(--text); background: var(--panel); }
+.pack-info { color: var(--text); margin: -4px 0 0; font-size: 14px; }
+.pack-info .en { font-size: 12px; }

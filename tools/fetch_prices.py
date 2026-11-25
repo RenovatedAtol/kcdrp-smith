@@ -33,9 +33,10 @@ def main():
     auction = {}
     for a in d.get("auction", {}).get("items", []):
         item = a.get("item", "")
-        if not item.startswith("good:"):
-            continue
-        auction[item[5:]] = {k: a.get(k) for k in ("name", "low", "avg", "instant", "qty", "sold")}
+        # goods by their id; game items on sale (Comfrey, Chicken, Egg...) by their item id
+        key = item[5:] if item.startswith("good:") else item
+        if key:
+            auction[key] = {k: a.get(k) for k in ("name", "low", "avg", "instant", "qty", "sold")}
     if not market or not auction:
         raise SystemExit("unexpected answer: no market or auction")
     # towns: where they stand and how full their five warehouse stocks are

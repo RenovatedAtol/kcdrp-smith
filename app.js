@@ -1,5 +1,5 @@
 "use strict";
-// KCD Roleplay smithing -> trade pack calculator. Plain JS, no build step.
+// KCD Roleplay crafts -> trade pack calculator. Plain JS, no build step.
 
 const PRICE_SOURCES = [
   // our own copy, refreshed every 30 minutes by .github/workflows/prices.yml
@@ -7,20 +7,22 @@ const PRICE_SOURCES = [
   // fallback: DanekKuznec's hourly copy of the auction (no market prices in it)
   { url: "https://raw.githubusercontent.com/DanekKuznec/kcd2-rp-crafting/prices/auction.json", kind: "danek", label: "копия аукциона DanekKuznec" },
 ];
-// pack prices of goods the auction has no "instant" figure for, read off the game's packing windows
-// (2026-11-25). The API has no exact pack price: "instant" matches the smith's raw goods, not all goods.
-const DEFAULT_PACK = { steel: 9.5, haft: 6, foundhorseshoe: 3, holynail: 4, brokenrod: 6, ghosthorseshoe: 38, leather: 6 };
-// levels 9 and 10 are left out: every piece of theirs is worth several crates and would mostly burn
-const MAX_LEVEL = 8;
-// level 1 is left out too: it levels up quickly and its pieces tell little
-const MIN_LEVEL = 2;
+// pack prices read off the game's packing windows (2026-11-25): the API has no exact pack price, and the auction's
+// "instant" (the crown's Sell-now price) matches the smith's raw goods but not the tailor's. These win over it.
+const DEFAULT_PACK = {
+  steel: 9.5, haft: 6, foundhorseshoe: 3, holynail: 4, brokenrod: 6, ghosthorseshoe: 38, leather: 6,
+  linenstrip: 1, suturekit: 2.3, padding: 3.2, hempfibre: 4, flax: 4, hide: 5, noose: 6.5, feather: 7, linen: 10,
+};
+// level 1 is left out: it levels up quickly and its pieces tell little. Levels where no piece fits the pack are
+// left out too (smithing 9-10: every piece is worth several crates and would mostly burn).
+const MIN_LEVEL = 2, MAX_LEVEL = 10;
 const STORE = "kcdrp-smith-v1";
 const DEFAULTS = {
-  buySource: "avg", cap: 450, packFee: 10, filler: "coal", ov: {}, excl: [], level: "all", search: "",
+  buySource: "avg", craft: "smithing", caps: {}, fillers: {}, packFee: 10, ov: {}, excl: [], level: "all", search: "",
   onlyFit: false, hideNA: true, hideParts: false, sort: { key: "eff", dir: -1 }, cart: [], itemPack: {}, tab: "items", origin: "Kuttenberg", stock: 2, hire: false,
 };
 
-let DATA = null;            // data/smithing.json
+let DATA = null;            // data/crafts.json
 let SERVER = { market: {}, auction: {}, towns: [], updated: null, label: "" };
 let S = load();
 let open = new Set();       // recipe ids with their breakdown open
@@ -31,6 +33,9 @@ function load() {
   catch { s = Object.assign({}, DEFAULTS); }
   // the packing fee was 25 by mistake: a 25 nobody typed in becomes the real 10
   if (!s.packFeeSet && s.packFee === 25) s.packFee = DEFAULTS.packFee;
+  // settings of the smithing-only version: one crate size and one filler
+  if (s.filler !== undefined) { s.fillers = Object.assign({ smithing: s.filler }, s.fillers); delete s.filler; }
+  if (s.cap !== undefined) { if (s.cap !== 450) s.caps = Object.assign({ smithing: s.cap }, s.caps); delete s.cap; }
   return s;
 }
 function save() { localStorage.setItem(STORE, JSON.stringify(S)); }
@@ -48,7 +53,8 @@ function fmt(v, d = 1) {
 function auctionFromMirror(d) {
   const auction = {};
   for (const a of (d.auction && d.auction.items) || []) {
-    if (String(a.item).startsWith("good:")) auction[a.item.slice(5)] = a;
+    const id = String(a.item || "");
+    if (id) auction[id.startsWith("good:") ? id.slice(5) : id] = a;
   }
   return auction;
 }
@@ -95,7 +101,12 @@ function showStatus(err) {
 // ---------------------------------------------------------------- model
 const MAT = () => DATA.materials;
 const ov = (k) => S.ov[k] || {};
-function recipeOf(key) { return DATA.byName.get(key) || null; }
+const craftOf = (id) => DATA.crafts.find((c) => c.id === id) || DATA.crafts[0];
+const CRAFT = () => craftOf(S.craft);
+const capOf = (cid = S.craft) => { const v = S.caps && S.caps[cid]; return num(v) > 0 ? v : craftOf(cid).pack.worth; };
+const recipesOf = (key) => DATA.byName.get(key) || [];
+// the recipe a material is made by: the cheapest of its recipes
+function recipeOf(key) { const c = costOf(key); return c.rec || recipesOf(key)[0] || null; }
 
 function serverAuction(id) {
   const a = SERVER.auction[id];
@@ -105,9 +116,9 @@ function serverAuction(id) {
   return null;
 }
 function serverPack(id) {
+  if (DEFAULT_PACK[id] != null) return DEFAULT_PACK[id];
   const a = SERVER.auction[id];
   if (a && num(a.instant) > 0) return a.instant;
-  if (DEFAULT_PACK[id] != null) return DEFAULT_PACK[id];
   const m = SERVER.market[id];
   return m && num(m.price) > 0 ? m.price : null;
 }
@@ -115,7 +126,8 @@ function serverPack(id) {
 function auctionPrice(key) {
   const m = MAT()[key], o = ov(key);
   if (num(o.buy) != null) return o.buy > 0 ? o.buy : null;
-  return m.kind === "good" ? serverAuction(m.id) : null;
+  if (m.kind === "good") return serverAuction(m.id);
+  return m.auctionItem ? serverAuction(m.auctionItem) : null;   // a game item on sale (Comfrey, Chicken, Egg...)
 }
 function packPrice(key) {
   const m = MAT()[key], o = ov(key);
@@ -135,11 +147,15 @@ function costOf(key, depth = 0) {
   let mode = ov(key).mode || "auto";
   if (mode === "realm") mode = "auto";   // crown prices are not used any more (older saved settings)
   const opts = [];
-  const a = auctionPrice(key), rec = MAT()[key].recipe ? recipeOf(key) : null;
-  if ((mode === "auto" || mode === "auction") && a != null) opts.push({ v: a, src: MAT()[key].kind === "good" ? "auction" : "price" });
-  if ((mode === "auto" || mode === "craft") && rec) {
-    const c = recipeCost(rec, depth + 1);
-    if (c != null) opts.push({ v: c, src: "craft" });
+  memoCost.set(key, { v: null, src: null });   // a guard against recipes that loop back
+  const m = MAT()[key], a = auctionPrice(key);
+  if ((mode === "auto" || mode === "auction") && a != null)
+    opts.push({ v: a, src: m.kind === "good" || (m.auctionItem && num(ov(key).buy) == null) ? "auction" : "price" });
+  if ((mode === "auto" || mode === "craft") && m.recipe) {
+    for (const rec of recipesOf(key)) {
+      const c = recipeCost(rec, depth + 1);
+      if (c != null) opts.push({ v: c, src: "craft", rec });
+    }
   }
   const best = opts.length ? opts.reduce((x, y) => (y.v < x.v ? y : x)) : { v: null, src: null };
   memoCost.set(key, best);
@@ -150,6 +166,7 @@ function packOf(key, depth = 0) {
   if (memoPack.has(key)) return memoPack.get(key);
   let v = packPrice(key);
   if (v == null) {
+    memoPack.set(key, null);
     const rec = MAT()[key].recipe ? recipeOf(key) : null;
     v = rec && depth < 12 ? recipePack(rec, depth + 1) : null;
   }
@@ -170,7 +187,7 @@ function recipeCost(r, depth = 0) {
 // 100.5, Flanged mace 145.5). Levels 5-8 not checked yet: assumed twice.
 const FEE_IN_PACK = (level) => (level >= 4 ? 2 : 1);
 const packFeeOf = (r) => r.fee * FEE_IN_PACK(r.level);
-const GUESS_TAG = '<span class="tag na" title="С 5-го уровня двойная плата станка в грузе не проверена в игре. Проверьте: положите предмет в ящик и впишите число из «Будет взято» в его расчёт.">не проверено</span>';
+const GUESS_TAG = '<span class="tag na" title="Двойная плата станка в грузе проверена в игре только у кузнечных предметов 4-го уровня. Проверьте: положите предмет в ящик и впишите число из «Будет взято» в его расчёт.">не проверено</span>';
 function recipePack(r, depth = 0) {
   if (depth === 0 && num(S.itemPack && S.itemPack[r.id]) != null) return S.itemPack[r.id];   // the value read in the game
   let t = packFeeOf(r);
@@ -191,22 +208,40 @@ function usedBy(r, depth = 0, acc = new Set()) {
   return acc;
 }
 
-function filler() {
-  const key = S.filler;
+// what tops a craft's pack up: the player's choice, or the pack's good that loses least
+function fillerFor(cid) {
+  const goods = craftOf(cid).pack.goods.filter((k) => MAT()[k]);
+  let key = S.fillers ? S.fillers[cid] : undefined;
+  if (key === undefined) {
+    let best = null;
+    const cap = capOf(cid);
+    for (const k of goods) {
+      const c = costOf(k), p = packOf(k);
+      if (!(c.v > 0) || !(p > 0)) continue;
+      // bought at auction: only if enough is on offer to fill a whole pack (a thin market's average misleads)
+      const a = SERVER.auction[MAT()[k].id];
+      if (c.src === "auction" && !(a && a.qty >= Math.ceil(cap / p))) continue;
+      const r = p / c.v;
+      if (!best || r > best.r + 1e-9 || (Math.abs(r - best.r) < 1e-9 && p < best.p)) best = { k, r, p };
+    }
+    key = best && best.k;
+  }
   if (!key || !MAT()[key]) return null;
   const c = costOf(key);
   if (c.v == null) return null;
   const p = packOf(key);
   return p > 0 ? { key, cost: c.v, pack: p } : null;
 }
+const filler = () => fillerFor(S.craft);
 
-function evaluate(r, fill) {
+function evaluate(r, fill, cap = capOf(r.craft)) {
   const M = recipeCost(r), P = recipePack(r);
   const res = { r, M, P, eff: M && P != null ? P / M : null, loss: M != null && P != null ? M - P : null };
   // levels 5+ count the bench fee twice by assumption only, unless the player typed the game's value
-  res.guess = r.level >= 5 && r.fee > 0 && num(S.itemPack && S.itemPack[r.id]) == null;
+  res.guess = r.fee > 0 && FEE_IN_PACK(r.level) > 1 && (r.level >= 5 || r.craft !== "smithing") && num(S.itemPack && S.itemPack[r.id]) == null;
+  res.fillKey = fill ? fill.key : null;
   if (M == null || P == null || P <= 0) { res.na = true; return res; }
-  const cap = S.cap, fee = packFee();
+  const fee = packFee();
   if (P > cap + 1e-9) {
     Object.assign(res, { fits: false, k: 1, n: 0, burn: P - cap, cost: M + fee, worth: cap });
   } else {
@@ -242,7 +277,7 @@ function matsText(r) {
 function crateText(x) {
   if (x.na) return "—";
   if (!x.fits) return `1 шт. <span class="tag burn">сгорит ${fmt(x.burn, 0)}</span>`;
-  const f = x.n ? ` + ${esc(MAT()[S.filler].ru.toLowerCase())} ×${x.n}` : "";
+  const f = x.n && x.fillKey ? ` + ${esc(MAT()[x.fillKey].ru.toLowerCase())} ×${x.n}` : "";
   const un = x.unfilled > 0.5 ? ` <span class="tag na">не добит на ${fmt(x.unfilled, 0)}</span>` : "";
   return `${x.k} шт.${f}${un}`;
 }
@@ -277,23 +312,32 @@ const COLS = [
 
 function render() {
   resetMemo();
-  const fill = filler();
+  const C = CRAFT(), fill = filler(), cap = capOf();
   const excl = new Set(S.excl);
-  const all = DATA.recipes.filter((r) => !r.aux && r.level >= MIN_LEVEL && r.level <= MAX_LEVEL).map((r) => evaluate(r, fill));
+  const inCraft = DATA.recipes.filter((r) => r.craft === C.id && !r.aux && r.level >= MIN_LEVEL && r.level <= MAX_LEVEL).map((r) => evaluate(r, fill, cap));
+  // levels where at least one piece fits the pack
+  const levels = [...new Set(inCraft.filter((x) => !x.na && x.fits).map((x) => x.r.level))].sort((a, b) => a - b);
+  const all = inCraft.filter((x) => levels.includes(x.r.level));
   for (const x of all) x.excluded = [...usedBy(x.r)].some((k) => excl.has(k));
+  // the materials this craft uses (the prices tab and the prices window show only them)
+  const used = new Set(C.pack.goods.filter((k) => MAT()[k]));
+  for (const x of inCraft) for (const k of usedBy(x.r)) used.add(k);
+  DATA.used = used;
+  renderHead(C, cap, fill, levels);
 
   // best per level
   let bh = "<tr><th></th><th>Ур.</th><th>Предмет</th><th class='n'>Себестоимость</th><th class='n'>В груз</th><th class='n'>КПД</th><th class='n'>Потеря за шт.</th><th>Ящик</th><th class='n'>Потеря ящика</th><th class='n'>Продать ящик от</th></tr>";
-  for (let L = MIN_LEVEL; L <= MAX_LEVEL; L++) {
+  for (const L of levels) {
     const c = all.filter((x) => x.r.level === L && !x.na && x.fits && !x.excluded && !x.r.en.startsWith("jobtool"));
     if (!c.length) { bh += `<tr class="na"><td></td><td class="n">${L}</td><td colspan="8">ни один доступный предмет не помещается в ящик</td></tr>`; continue; }
     c.sort((a, b) => b.eff - a.eff || b.P - a.P);
     const x = c[0];
     bh += `<tr><td>${addBtn(x)}</td><td class="n">${L}</td><td>${nameCell(x.r)}</td><td class="n">${fmt(x.M)}</td><td class="n">${fmt(x.P)}${x.guess ? " " + GUESS_TAG : ""}</td><td class="n ${effClass(x.eff)}">${fmt(x.eff * 100)}%</td><td class="n">${fmt(x.loss)}</td><td>${crateText(x)}</td><td class="n">${fmt(x.crate)}</td><td class="n">${sellAtHtml(x.sellAt, x.worth)}</td></tr>`;
   }
+  if (!levels.length) bh += `<tr class="na"><td colspan="10">Нет цен на материалы этого ремесла — впишите их на вкладке «Материалы и цены».</td></tr>`;
   if (fill) {
-    const nb = Math.ceil(S.cap / fill.pack - 1e-9), fc = nb * fill.cost + packFee();
-    bh += `<tr><td></td><td></td><td colspan="8" class="src-tag">Для сравнения: ящик из одного товара «${esc(MAT()[fill.key].ru)}» — ${nb} шт., потеря ${fmt(fc - S.cap)} гр. с упаковкой, продать от ${fmt(fc, 0)} гр.</td></tr>`;
+    const nb = Math.ceil(cap / fill.pack - 1e-9), fc = nb * fill.cost + packFee();
+    bh += `<tr><td></td><td></td><td colspan="8" class="src-tag">Для сравнения: груз из одного товара «${esc(MAT()[fill.key].ru)}» — ${nb} шт., потеря ${fmt(fc - cap)} гр. с упаковкой, продать от ${fmt(fc, 0)} гр.</td></tr>`;
   }
   $("best").innerHTML = bh;
 
@@ -325,10 +369,35 @@ function render() {
   if (!rows.length) h += `<tr><td colspan="${COLS.length + 1}" class="src-tag">Нет рецептов под эти фильтры.</td></tr>`;
   $("recipes").innerHTML = h;
 
-  $("excluded").innerHTML = S.excl.map((k) => `<span class="chip x" data-k="${esc(k)}">${esc(MAT()[k] ? MAT()[k].ru : k)}</span>`).join("");
+  $("excluded").innerHTML = S.excl.filter((k) => used.has(k)).map((k) => `<span class="chip x" data-k="${esc(k)}">${esc(MAT()[k] ? MAT()[k].ru : k)}</span>`).join("");
   renderPrices();
-  renderCart(fill);
-  renderRoute(fill);
+  renderCart();
+  renderRoute(fill, cap);
+}
+
+const STOCK_RU = ["еда", "древесина и топливо", "металл", "ткань и кожа", "роскошь"];
+function renderHead(C, cap, fill, levels) {
+  const sel = $("craft");
+  const opts = DATA.crafts.map((c) => `<option value="${c.id}">${esc(c.ru)}</option>`).join("");
+  if (sel.dataset.opts !== opts) { sel.innerHTML = opts; sel.dataset.opts = opts; }
+  sel.value = C.id;
+  document.title = `${C.ru} → торговый груз · KCD Roleplay`;
+  const lvTxt = levels.length ? `${levels[0]}–${levels[levels.length - 1]}` : "—";
+  $("craftSub").textContent = `Себестоимость каждого предмета ремесла «${C.ru}» ${lvTxt} уровней, сколько он засчитывается в груз «${C.pack.ru}» и сколько вы теряете, если добивать груз самым выгодным товаром. Сервер: KCD Roleplay [RU].`;
+  const src = { wiki: "по вики сервера", game: "по окну упаковки в игре", guess: "<b>не проверено</b>: в вики этого груза нет, состав и стоимость — предположение" }[C.pack.source] || "";
+  $("packInfo").innerHTML = `<b>${esc(C.pack.ru)}</b>: ${fmt(C.pack.worth, 0)} гр. · пополняет склад «${STOCK_RU[C.pack.stock]}» · свежесть: ${esc(C.pack.fresh)} · ${src}.` +
+    `<span class="en">Принимает: ${esc(C.pack.goods.filter((k) => MAT()[k]).map((k) => MAT()[k].ru.toLowerCase()).join(", "))} и предметы этого ремесла.</span>`;
+  // the level chips: only levels that have a piece that fits
+  if (S.level !== "all" && !levels.includes(+S.level)) S.level = "all";
+  $("levels").innerHTML = ["all", ...levels].map((l) => `<span class="chip${String(S.level) === String(l) ? " on" : ""}" data-l="${l}">${l === "all" ? "все уровни" : l}</span>`).join("");
+  // the crate size and the filler of this craft
+  $("cap").value = cap;
+  const goods = C.pack.goods.filter((k) => MAT()[k]).sort((a, b) => MAT()[a].ru.localeCompare(MAT()[b].ru, "ru"));
+  const auto = S.fillers[C.id] === undefined;
+  const fo = `<option value="__auto">авто${auto && fill ? ": " + esc(MAT()[fill.key].ru.toLowerCase()) : ""}</option><option value="">ничем</option>` +
+    goods.map((k) => `<option value="${esc(k)}">${esc(MAT()[k].ru)}</option>`).join("");
+  $("filler").innerHTML = fo;
+  $("filler").value = auto ? "__auto" : S.fillers[C.id];
 }
 
 const SRC = { auction: "аукцион", craft: "сделать", price: "ваша цена" };
@@ -364,7 +433,7 @@ function modeSelect(key) {
 function exclBox(key) { return `<input type="checkbox" data-k="${esc(key)}" data-f="excl"${S.excl.includes(key) ? " checked" : ""}>`; }
 
 function renderPrices() {
-  const keys = Object.keys(MAT()).sort((a, b) => MAT()[a].ru.localeCompare(MAT()[b].ru, "ru"));
+  const keys = Object.keys(MAT()).filter((k) => !DATA.used || DATA.used.has(k)).sort((a, b) => MAT()[a].ru.localeCompare(MAT()[b].ru, "ru"));
   const goods = keys.filter((k) => MAT()[k].kind === "good");
   const parts = keys.filter((k) => MAT()[k].kind === "part");
   const manual = keys.filter((k) => MAT()[k].kind === "manual");
@@ -386,10 +455,10 @@ function renderPrices() {
       <td>${modeSelect(k)}</td><td class="n">${fmt(c.v, 2)} <span class="src-tag">${c.src ? SRC[c.src] : ""}</span></td><td>${exclBox(k)}</td></tr>`;
   }
   $("parts").innerHTML = p;
-  let mh = `<tr><th>Материал</th><th class="n">Покупка</th><th class="n">В груз</th><th class="n">Итого за шт.</th><th>искл.</th></tr>`;
+  let mh = `<tr><th>Материал</th><th class="n">Аукцион ср.</th><th class="n">Покупка</th><th class="n">В груз</th><th class="n">Итого за шт.</th><th>искл.</th></tr>`;
   for (const k of manual) {
-    const c = costOf(k);
-    mh += `<tr><td>${matName(k)}</td><td class="n">${priceInput(k, "buy", null)}</td><td class="n">${priceInput(k, "pack", null)}</td>
+    const c = costOf(k), m = MAT()[k], a = m.auctionItem ? SERVER.auction[m.auctionItem] || {} : {};
+    mh += `<tr><td>${matName(k)}</td><td class="n">${fmt(a.avg, 2)}</td><td class="n">${priceInput(k, "buy", m.auctionItem ? serverAuction(m.auctionItem) : null)}</td><td class="n">${priceInput(k, "pack", null)}</td>
       <td class="n">${c.v != null ? fmt(c.v, 2) : '<span class="tag na">нет в наличии</span>'}</td><td>${exclBox(k)}</td></tr>`;
   }
   $("manual").innerHTML = mh;
@@ -404,7 +473,7 @@ function addBtn(x) {
 }
 function addToCart(id) {
   resetMemo();
-  const r = recipeById(id), x = r && evaluate(r, filler());
+  const r = recipeById(id), x = r && evaluate(r, fillerFor(r.craft));
   if (!x || x.na) return;
   const per = x.fits ? x.k : 1;                  // one crate's worth
   const line = S.cart.find((l) => l.id === id);
@@ -423,14 +492,16 @@ function craftDepth(key, seen = new Set()) {
   return d + 1;
 }
 
-function cartPlan(fill) {
-  const cap = S.cap, lines = [], crates = [], crafts = [], demand = new Map();
+function cartPlan() {
+  const lines = [], crates = [], crafts = [], demand = new Map();
   const add = (k, q) => demand.set(k, (demand.get(k) || 0) + q);
   let fees = 0, missing = [];
   for (const l of S.cart) {
     const r = recipeById(l.id);
     if (!r) continue;
-    const x = evaluate(r, fill), qty = Math.max(0, Math.floor(l.qty) || 0);
+    // each piece goes into its own craft's pack, topped up with that pack's filler
+    const fill = fillerFor(r.craft), cap = capOf(r.craft);
+    const x = evaluate(r, fill, cap), qty = Math.max(0, Math.floor(l.qty) || 0);
     lines.push({ l, r, x, qty });
     if (x.na) { missing.push(r.ru || r.en); continue; }
     if (!qty) continue;
@@ -444,7 +515,8 @@ function cartPlan(fill) {
       const items = Math.min(per, left), value = items * x.P;
       let fillN = 0;
       if (x.fits && fill && cap - value > 1e-9) fillN = Math.ceil((cap - value) / fill.pack - 1e-9);
-      crates.push({ id: l.id, r, items, fill: fillN, value: Math.min(cap, value + fillN * (fill ? fill.pack : 0)), burn: x.fits ? 0 : value - cap,
+      crates.push({ id: l.id, r, items, fill: fillN, fillKey: fill ? fill.key : null, fillCost: fill ? fill.cost : 0, cap,
+        value: Math.min(cap, value + fillN * (fill ? fill.pack : 0)), burn: x.fits ? 0 : value - cap,
         cost: items * x.M + (fill ? fillN * fill.cost : 0) + packFee() });
     }
   }
@@ -465,24 +537,29 @@ function cartPlan(fill) {
       if (costOf(k).src === "craft") queue.add(k);
     }
   }
-  const fillTotal = crates.reduce((t, c) => t + c.fill, 0);
+  // the fillers, by good
+  const fills = new Map();
+  for (const c of crates) if (c.fill && c.fillKey) {
+    const f = fills.get(c.fillKey) || { n: 0, cost: c.fillCost };
+    f.n += c.fill; fills.set(c.fillKey, f);
+  }
+  const fillTotal = [...fills.values()].reduce((t, f) => t + f.n, 0);
   const buy = [...demand.entries()].map(([k, q]) => ({ k, q, c: costOf(k) }))
     .sort((a, b) => MAT()[a.k].ru.localeCompare(MAT()[b.k].ru, "ru"));
   let cost = fees;
   for (const b of buy) cost += b.c.v != null ? b.c.v * b.q : 0;
-  if (fill) cost += fillTotal * fill.cost;
+  for (const f of fills.values()) cost += f.n * f.cost;
   const packing = crates.length * packFee();
   cost += packing;
   const value = crates.reduce((t, c) => t + c.value, 0);
-  return { lines, crates, crafts, buy, fees, fillTotal, packing, cost, value, missing };
+  return { lines, crates, crafts, buy, fees, fills, fillTotal, packing, cost, value, missing };
 }
 
-function renderCart(fill) {
+function renderCart() {
   const box = $("cart");
   $("cartCount").textContent = S.cart.length ? `Корзина: ${S.cart.length}` : "Корзина пуста";
   if (!S.cart.length) { box.innerHTML = '<p class="hint">Нажмите «+» у предмета в таблицах ниже — он добавится на один ящик. Количество можно поменять здесь.</p>'; return; }
-  const p = cartPlan(fill);
-  const fk = fill && fill.key, fname = fk ? MAT()[fk].ru.toLowerCase() : "";
+  const p = cartPlan();
   let h = `<div class="cart-grid"><div>`;
   // what to craft
   h += `<h3>Что сделать</h3><table class="sub-table"><tr><th>Предмет</th><th class="n">Штук</th><th class="n">Ящиков</th><th class="n">В груз</th><th></th></tr>`;
@@ -507,14 +584,14 @@ function renderCart(fill) {
   // shopping list
   h += `<h3>Взять с собой</h3><table class="sub-table"><tr><th>Материал</th><th class="n">Кол-во</th><th>Откуда</th><th class="n">Цена</th><th class="n">Сумма</th></tr>`;
   for (const b of p.buy) {
-    const isFill = b.k === fk;
+    const isFill = p.fills.has(b.k);
     h += `<tr><td>${matName(b.k, isFill ? " <span class='src-tag'>(в рецепты)</span>" : "")}</td><td class="n">${fmt(b.q, 2)}</td>
       <td class="src-tag">${b.c.src ? SRC[b.c.src] : '<span class="tag na">нет цены</span>'}</td><td class="n">${fmt(b.c.v, 2)}</td><td class="n">${fmt(b.c.v != null ? b.c.v * b.q : null)}</td></tr>`;
   }
-  if (fill && p.fillTotal) {
-    h += `<tr><td>${matName(fk, ' <span class="src-tag">(добивка ящиков)</span>')}</td><td class="n">${p.fillTotal}</td><td class="src-tag">${SRC[costOf(fk).src] || ""}</td><td class="n">${fmt(fill.cost, 2)}</td><td class="n">${fmt(fill.cost * p.fillTotal)}</td></tr>`;
+  for (const [fk, f] of p.fills) {
+    h += `<tr><td>${matName(fk, ' <span class="src-tag">(добивка ящиков)</span>')}</td><td class="n">${f.n}</td><td class="src-tag">${SRC[costOf(fk).src] || ""}</td><td class="n">${fmt(f.cost, 2)}</td><td class="n">${fmt(f.cost * f.n)}</td></tr>`;
     const inRec = (p.buy.find((b) => b.k === fk) || {}).q || 0;
-    if (inRec) h += `<tr class="total"><td>${esc(MAT()[fk].ru)} всего</td><td class="n">${fmt(inRec + p.fillTotal, 2)}</td><td colspan="3"></td></tr>`;
+    if (inRec) h += `<tr class="total"><td>${esc(MAT()[fk].ru)} всего</td><td class="n">${fmt(inRec + f.n, 2)}</td><td colspan="3"></td></tr>`;
   }
   h += `<tr><td>Плата станков</td><td></td><td></td><td></td><td class="n">${fmt(p.fees)}</td></tr>`;
   if (p.crates.length) h += `<tr><td>Упаковка ящиков</td><td class="n">${p.crates.length}</td><td></td><td class="n">${fmt(packFee())}</td><td class="n">${fmt(p.packing)}</td></tr>`;
@@ -531,25 +608,25 @@ function renderCart(fill) {
   // crates
   h += `<h3>По ящикам</h3><ol class="crates">`;
   p.crates.forEach((c, i) => {
-    h += `<li><button type="button" class="crate-del" data-crdel="${esc(c.id)}" data-items="${c.items}" title="Убрать этот ящик">×</button><span class="crate-no">${i + 1}.</span> ${esc(c.r.ru || c.r.en)} ×${c.items}${c.fill ? ` + ${esc(fname)} ×${c.fill}` : ""} — ${fmt(c.value)} гр. в грузе, <b>продать от ${fmt(c.cost, 0)}</b> <span class="src-tag">(${c.cost - c.value > GAIN_MAX ? `+${fmt(c.cost - c.value, 0)}, дорога столько не даст` : `+${fmt(Math.max(0, c.cost - c.value), 0)} ≈ ${fmt(Math.max(0, c.cost - c.value) / GAIN_PER_KM, 1)} км`})</span>${c.burn > 0 ? ` <span class="tag burn">сгорит ${fmt(c.burn, 0)}</span>` : ""}</li>`;
+    h += `<li><button type="button" class="crate-del" data-crdel="${esc(c.id)}" data-items="${c.items}" title="Убрать этот ящик">×</button><span class="crate-no">${i + 1}.</span> ${esc(c.r.ru || c.r.en)} ×${c.items}${c.fill ? ` + ${esc(MAT()[c.fillKey].ru.toLowerCase())} ×${c.fill}` : ""} — ${fmt(c.value)} гр. в грузе, <b>продать от ${fmt(c.cost, 0)}</b> <span class="src-tag">(${c.cost - c.value > GAIN_MAX ? `+${fmt(c.cost - c.value, 0)}, дорога столько не даст` : `+${fmt(Math.max(0, c.cost - c.value), 0)} ≈ ${fmt(Math.max(0, c.cost - c.value) / GAIN_PER_KM, 1)} км`})</span>${c.burn > 0 ? ` <span class="tag burn">сгорит ${fmt(c.burn, 0)}</span>` : ""}</li>`;
   });
   h += `</ol><p class="cart-actions"><button type="button" id="cartCopy">Скопировать список</button> <button type="button" class="ghost" id="cartClear">Очистить корзину</button> <span id="cartMsg" class="src-tag"></span></p>`;
   box.innerHTML = h;
-  box.dataset.text = cartText(p, fill);
+  box.dataset.text = cartText(p);
 }
 
-function cartText(p, fill) {
-  const fk = fill && fill.key, L = [];
+function cartText(p) {
+  const L = [];
   L.push("Сделать:");
   for (const { r, qty } of p.lines) L.push(`  ${r.ru || r.en} — ${qty} шт.`);
   const inner = p.crafts.filter((c) => !c.top);
   if (inner.length) { L.push("По пути:"); for (const c of inner.slice().reverse()) L.push(`  ${MAT()[c.key].ru} — ${c.n} раз (${c.made} шт.)`); }
   L.push("Взять:");
-  for (const b of p.buy) L.push(`  ${MAT()[b.k].ru}${b.k === fk ? " (в рецепты)" : ""} — ${fmt(b.q, 2)}`);
-  if (fill && p.fillTotal) L.push(`  ${MAT()[fk].ru} (добивка) — ${p.fillTotal}`);
+  for (const b of p.buy) L.push(`  ${MAT()[b.k].ru}${p.fills.has(b.k) ? " (в рецепты)" : ""} — ${fmt(b.q, 2)}`);
+  for (const [fk, f] of p.fills) L.push(`  ${MAT()[fk].ru} (добивка) — ${f.n}`);
   L.push(`Плата станков: ${fmt(p.fees)} гр. · Упаковка: ${fmt(p.packing)} гр. · Потратите: ${fmt(p.cost)} гр. · Ящиков: ${p.crates.length}`);
   L.push("По ящикам:");
-  p.crates.forEach((c, i) => L.push(`  ${i + 1}. ${c.r.ru || c.r.en} ×${c.items}${c.fill ? ` + ${MAT()[fk].ru.toLowerCase()} ×${c.fill}` : ""} — продать от ${fmt(c.cost, 0)} гр.`));
+  p.crates.forEach((c, i) => L.push(`  ${i + 1}. ${c.r.ru || c.r.en} ×${c.items}${c.fill ? ` + ${MAT()[c.fillKey].ru.toLowerCase()} ×${c.fill}` : ""} — продать от ${fmt(c.cost, 0)} гр.`));
   return L.join("\n");
 }
 
@@ -558,15 +635,16 @@ function cartText(p, fill) {
 function renderPricesDialog() {
   const q = $("pricesSearch").value.trim().toLowerCase();
   const smith = $("pricesSmith").checked;
-  const smithIds = new Set(Object.values(MAT()).filter((m) => m.kind === "good").map((m) => m.id));
+  const used = DATA.used || new Set(Object.keys(MAT()));
+  const smithIds = new Set([...used].map((k) => MAT()[k]).filter((m) => m && (m.kind === "good" || m.auctionItem)).map((m) => (m.kind === "good" ? m.id : m.auctionItem)));
   const ids = new Set([...Object.keys(SERVER.market), ...Object.keys(SERVER.auction)]);
   const ruOf = (id) => {
-    const m = Object.values(MAT()).find((x) => x.kind === "good" && x.id === id);
+    const m = Object.values(MAT()).find((x) => (x.kind === "good" && x.id === id) || x.auctionItem === id);
     const a = SERVER.auction[id];
     const n = m ? m.ru : a && a.name ? a.name : id;
     return n.charAt(0).toUpperCase() + n.slice(1);
   };
-  const iconOf = (id) => (Object.values(MAT()).find((x) => x.kind === "good" && x.id === id) || {}).icon;
+  const iconOf = (id) => (Object.values(MAT()).find((x) => (x.kind === "good" && x.id === id) || x.auctionItem === id) || {}).icon;
   let rows = [...ids].map((id) => ({ id, ru: ruOf(id), m: SERVER.market[id] || {}, a: SERVER.auction[id] || {} }))
     .filter((x) => (!smith || smithIds.has(x.id)) && (!q || x.ru.toLowerCase().includes(q) || x.id.includes(q)))
     .sort((x, y) => x.ru.localeCompare(y.ru, "ru"));
@@ -619,18 +697,18 @@ function routeEval(from, to, k, cut, plan, crates) {
   return { from, t: to, km, lv, noStore, ok, gain, profit, why };
 }
 
-function routeCard(title, list, coalCost, hasCart) {
+function routeCard(title, list, coalCost, hasCart, cap, fillName) {
   if (!list.length) return `<div class="rb-card"><h4>${title}</h4><p class="src-tag">Нет маршрутов, где можно продать.</p></div>`;
   const li = list.map((x, i) => {
-    const coal = coalCost != null ? S.cap + x.gain - coalCost : null;
+    const coal = coalCost != null ? cap + x.gain - coalCost : null;
     return `<li><span class="rb-no">${i + 1}</span><div><b>${esc(townRu(x.from.name))} → ${esc(townRu(x.t.name))}</b>
       <span class="en">${fmt(x.km, 1)} км · склад ${fmt(x.lv, 0)}% · нужда ×${fmt(needOf(x.lv), 2)}</span>
-      <span class="rb-nums">+${fmt(x.gain, 0)} гр. за ящик${coal != null ? ` · ящик угля <span class="${coal >= 0 ? "good" : "bad"}">${coal >= 0 ? "+" : ""}${fmt(coal, 0)}</span>` : ""}${hasCart ? ` · корзина <span class="${x.profit >= 0 ? "good" : "bad"}">${x.profit >= 0 ? "+" : ""}${fmt(x.profit, 0)}</span>` : ""}</span></div></li>`;
+      <span class="rb-nums">+${fmt(x.gain, 0)} гр. за ящик${coal != null ? ` · груз «${esc(fillName)}» <span class="${coal >= 0 ? "good" : "bad"}">${coal >= 0 ? "+" : ""}${fmt(coal, 0)}</span>` : ""}${hasCart ? ` · корзина <span class="${x.profit >= 0 ? "good" : "bad"}">${x.profit >= 0 ? "+" : ""}${fmt(x.profit, 0)}</span>` : ""}</span></div></li>`;
   }).join("");
   return `<div class="rb-card"><h4>${title}</h4><ol>${li}</ol></div>`;
 }
 
-function renderRoute(fill) {
+function renderRoute(fill, cap) {
   const towns = SERVER.towns || [];
   const sel = $("routeOrigin");
   if (!towns.length) {
@@ -650,14 +728,15 @@ function renderRoute(fill) {
 
   const o = towns.find((t) => t.name === S.origin);
   const k = +S.stock, cut = S.hire ? 0.85 : 1;
-  const plan = S.cart.length ? cartPlan(fill) : null;
+  const plan = S.cart.length ? cartPlan() : null;
   const crates = plan ? plan.crates.filter((c) => c.value > 0) : [];
   const hasCart = !!(plan && crates.length);
   const better = (a, b) => (b.ok - a.ok) || (hasCart ? (b.profit ?? -1e9) - (a.profit ?? -1e9) : (b.gain ?? -1) - (a.gain ?? -1)) || a.km - b.km;
   const rows = towns.map((t) => routeEval(o, t, k, cut, plan, crates));
   rows.sort(better);
 
-  const coalCost = fill ? Math.ceil(S.cap / fill.pack - 1e-9) * fill.cost + packFee() : null;
+  const coalCost = fill ? Math.ceil(cap / fill.pack - 1e-9) * fill.cost + packFee() : null;
+  const fillName = fill ? MAT()[fill.key].ru.toLowerCase() : "";
   // the three best routes between any two towns that keep a warehouse
   const all = [];
   for (const a of towns) {
@@ -665,9 +744,9 @@ function renderRoute(fill) {
     for (const b of towns) { const x = routeEval(a, b, k, cut, plan, crates); if (x.ok) all.push(x); }
   }
   all.sort(better);
-  $("routeBest").innerHTML = routeCard("Лучшие 3 маршрута", all.slice(0, 3), coalCost, hasCart);
-  let h = `<tr><th>Город</th><th class="n">Расстояние</th><th class="n">Склад «${esc(STOCKS[k])}»</th><th class="n">Нужда ≈</th><th class="n">Прибыль с дороги за ящик</th><th class="n">Заплатят за полный ящик</th>`;
-  if (coalCost != null) h += `<th class="n">Ящик угля: итог</th>`;
+  $("routeBest").innerHTML = routeCard("Лучшие 3 маршрута", all.slice(0, 3), coalCost, hasCart, cap, fillName);
+  let h = `<tr><th>Город</th><th class="n">Расстояние</th><th class="n">Склад «${esc(STOCKS[k])}»</th><th class="n">Нужда ≈</th><th class="n">Прибыль с дороги за ящик</th><th class="n">Заплатят за полный груз (${fmt(cap, 0)})</th>`;
+  if (coalCost != null) h += `<th class="n">Груз «${esc(fillName)}»: итог</th>`;
   if (hasCart) h += `<th class="n">Ваша корзина (${crates.length} ящ.): итог</th>`;
   h += `</tr>`;
   for (const x of rows) {
@@ -677,9 +756,9 @@ function renderRoute(fill) {
       <td class="n">${x.t.name === S.origin ? "—" : fmt(x.km, 1) + " км"}</td>
       <td class="n ${lvCls}">${x.noStore ? "—" : fmt(x.lv, 0) + "%"}</td><td class="n">${need != null ? "×" + fmt(need, 2) : "—"}</td>
       <td class="n">${x.ok ? "+" + fmt(x.gain, 0) + " гр." + (x.gain >= GAIN_MAX * cut - 0.5 ? ' <span class="src-tag">(максимум)</span>' : "") : "—"}</td>
-      <td class="n">${x.ok ? fmt(S.cap + x.gain, 0) + " гр." : "—"}</td>`;
+      <td class="n">${x.ok ? fmt(cap + x.gain, 0) + " гр." : "—"}</td>`;
     if (coalCost != null) {
-      const v = x.ok ? S.cap + x.gain - coalCost : null;
+      const v = x.ok ? cap + x.gain - coalCost : null;
       h += `<td class="n ${v == null ? "" : v >= 0 ? "good" : "bad"}">${v == null ? "—" : (v >= 0 ? "+" : "") + fmt(v, 0)}</td>`;
     }
     if (hasCart) h += `<td class="n ${x.profit == null ? "" : x.profit >= 0 ? "good" : "bad"}">${x.profit == null ? "—" : (x.profit >= 0 ? "+" : "") + fmt(x.profit, 0) + " гр."}</td>`;
@@ -690,7 +769,7 @@ function renderRoute(fill) {
     `Склады — данные сервера на ${SERVER.townsUpdated ? new Date(SERVER.townsUpdated).toLocaleString("ru-RU", { hour: "2-digit", minute: "2-digit", day: "numeric", month: "short" }) : "—"}, расстояния — по прямой между центрами городов. ` +
     `«Итог» — сколько вы заработаете после продажи: стоимость ящиков + прибыль с дороги − все затраты (материалы, станки, добивка, упаковка ${fmt(packFee(), 0)} гр.). ` +
     (hasCart ? "" : "Добавьте предметы в корзину, чтобы увидеть итог по ним. ") +
-    `Не учтено: маршрут дня (×1,1), свежесть груза, дневной лимит прибыли, точное место вашей кузницы. Множитель нужды — оценка по вики.`;
+    `Склад и груз — для ремесла «${esc(CRAFT().ru)}». Не учтено: маршрут дня (×1,1), свежесть груза, дневной лимит прибыли, точное место вашего верстака. Множитель нужды — оценка по вики.`;
 }
 
 // ---------------------------------------------------------------- tabs
@@ -717,30 +796,37 @@ function bind() {
   $("routeStock").onchange = (e) => { S.stock = +e.target.value; save(); render(); };
   $("routeHire").onchange = (e) => { S.hire = e.target.checked; save(); render(); };
   $("buySource").value = S.buySource;
-  $("cap").value = S.cap;
   $("packFee").value = packFee();
   $("search").value = S.search;
   $("onlyFit").checked = S.onlyFit;
   $("hideNA").checked = S.hideNA;
   $("hideParts").checked = S.hideParts;
-  const goods = Object.keys(MAT()).filter((k) => MAT()[k].kind === "good").sort((a, b) => MAT()[a].ru.localeCompare(MAT()[b].ru, "ru"));
-  $("filler").innerHTML = '<option value="">ничем</option>' + goods.map((k) => `<option value="${esc(k)}">${esc(MAT()[k].ru)}</option>`).join("");
-  $("filler").value = S.filler;
-  const lv = ["all", ...Array.from({ length: MAX_LEVEL - MIN_LEVEL + 1 }, (_, i) => i + MIN_LEVEL)];
-  if (S.level !== "all" && (+S.level > MAX_LEVEL || +S.level < MIN_LEVEL)) S.level = "all";
-  const drawLevels = () => ($("levels").innerHTML = lv.map((l) => `<span class="chip${String(S.level) === String(l) ? " on" : ""}" data-l="${l}">${l === "all" ? "все уровни" : l}</span>`).join(""));
-  drawLevels();
+  $("craft").onchange = (e) => {
+    S.craft = e.target.value;
+    S.stock = CRAFT().pack.stock;   // the route tab follows the craft's pack
+    S.level = "all"; open = new Set();
+    save(); render();
+  };
 
   const set = (k, v) => { S[k] = v; save(); render(); };
   $("buySource").onchange = (e) => set("buySource", e.target.value);
-  $("cap").onchange = (e) => set("cap", Math.max(1, +e.target.value || 450));
+  $("cap").onchange = (e) => {
+    const v = Math.max(1, +e.target.value || 0);
+    S.caps = Object.assign({}, S.caps);
+    if (!v || v === CRAFT().pack.worth) delete S.caps[S.craft]; else S.caps[S.craft] = v;
+    save(); render();
+  };
   $("packFee").onchange = (e) => { S.packFeeSet = true; set("packFee", Math.max(0, +e.target.value || 0)); };
-  $("filler").onchange = (e) => set("filler", e.target.value);
+  $("filler").onchange = (e) => {
+    S.fillers = Object.assign({}, S.fillers);
+    if (e.target.value === "__auto") delete S.fillers[S.craft]; else S.fillers[S.craft] = e.target.value;
+    save(); render();
+  };
   $("search").oninput = (e) => set("search", e.target.value);
   $("onlyFit").onchange = (e) => set("onlyFit", e.target.checked);
   $("hideNA").onchange = (e) => set("hideNA", e.target.checked);
   $("hideParts").onchange = (e) => set("hideParts", e.target.checked);
-  $("levels").onclick = (e) => { const l = e.target.dataset.l; if (l) { S.level = l; save(); drawLevels(); render(); } };
+  $("levels").onclick = (e) => { const l = e.target.dataset.l; if (l) { S.level = l; save(); render(); } };
   $("excluded").onclick = (e) => { const k = e.target.dataset.k; if (k) set("excl", S.excl.filter((x) => x !== k)); };
   $("recipes").addEventListener("change", (e) => {
     const id = e.target.dataset.ipack;
@@ -822,10 +908,11 @@ async function refresh(bust) {
 }
 
 async function main() {
-  const r = await fetch("data/smithing.json");
+  const r = await fetch("data/crafts.json");
   DATA = await r.json();
   DATA.byName = new Map();
-  for (const x of DATA.recipes) if (!DATA.byName.has(x.en)) DATA.byName.set(x.en, x);
+  for (const x of DATA.recipes) { if (!DATA.byName.has(x.en)) DATA.byName.set(x.en, []); DATA.byName.get(x.en).push(x); }
+  if (!DATA.crafts.some((c) => c.id === S.craft)) S.craft = DATA.crafts[0].id;
   DATA.partNames = new Set(Object.entries(DATA.materials).filter(([, m]) => m.kind === "part" || m.recipe).map(([k]) => k));
   bind();
   await refresh(false);
