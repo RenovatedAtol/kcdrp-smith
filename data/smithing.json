@@ -1,0 +1,2701 @@
+{
+ "source": "https://wiki.kcdroleplay.com/recipes/",
+ "materials": {
+  "Scrap metal": {
+   "kind": "part",
+   "id": "Scrap metal",
+   "ru": "Железный лом",
+   "recipe": true
+  },
+  "Iron": {
+   "kind": "part",
+   "id": "Iron",
+   "ru": "Железо",
+   "recipe": true
+  },
+  "coal": {
+   "kind": "good",
+   "id": "coal",
+   "ru": "Уголь",
+   "recipe": false
+  },
+  "logs": {
+   "kind": "good",
+   "id": "logs",
+   "ru": "Брёвна",
+   "recipe": false
+  },
+  "iron ore": {
+   "kind": "good",
+   "id": "ore",
+   "ru": "Железная руда",
+   "recipe": false
+  },
+  "antlers": {
+   "kind": "good",
+   "id": "antler",
+   "ru": "Рога",
+   "recipe": false
+  },
+  "Fastening material": {
+   "kind": "part",
+   "id": "Fastening material",
+   "ru": "Крепёж",
+   "recipe": true
+  },
+  "steel": {
+   "kind": "good",
+   "id": "steel",
+   "ru": "Сталь",
+   "recipe": true
+  },
+  "Ordinary sword guard": {
+   "kind": "part",
+   "id": "Ordinary sword guard",
+   "ru": "Обычная гарда",
+   "recipe": true
+  },
+  "Pig skin": {
+   "kind": "part",
+   "id": "Pig skin",
+   "ru": "Свиная кожа",
+   "recipe": true
+  },
+  "Coin sword pommel": {
+   "kind": "part",
+   "id": "Coin sword pommel",
+   "ru": "Плоское навершие меча",
+   "recipe": true
+  },
+  "copper ore": {
+   "kind": "good",
+   "id": "copperore",
+   "ru": "Медная руда",
+   "recipe": false
+  },
+  "Straight sword guard": {
+   "kind": "part",
+   "id": "Straight sword guard",
+   "ru": "Прямая гарда",
+   "recipe": true
+  },
+  "Frankfurt steel": {
+   "kind": "part",
+   "id": "Frankfurt steel",
+   "ru": "Франкфуртская сталь",
+   "recipe": true
+  },
+  "Copper": {
+   "kind": "part",
+   "id": "Copper",
+   "ru": "Медь",
+   "recipe": true
+  },
+  "silver ore": {
+   "kind": "good",
+   "id": "silver",
+   "ru": "Серебряная руда",
+   "recipe": false
+  },
+  "Toledo steel": {
+   "kind": "part",
+   "id": "Toledo steel",
+   "ru": "Толедская сталь",
+   "recipe": true
+  },
+  "Antler shards": {
+   "kind": "part",
+   "id": "Antler shards",
+   "ru": "Осколки рогов",
+   "recipe": true
+  },
+  "hides": {
+   "kind": "good",
+   "id": "hide",
+   "ru": "Шкуры",
+   "recipe": false
+  },
+  "leather": {
+   "kind": "good",
+   "id": "leather",
+   "ru": "Кожа",
+   "recipe": true
+  },
+  "hafts": {
+   "kind": "good",
+   "id": "haft",
+   "ru": "Древки",
+   "recipe": false
+  },
+  "Exotic wood": {
+   "kind": "manual",
+   "id": "exoticwood",
+   "ru": "Экзотическая древесина",
+   "recipe": false
+  },
+  "Coloured gold": {
+   "kind": "manual",
+   "id": "colouredgold",
+   "ru": "Цветное золото",
+   "recipe": false
+  },
+  "Tincal": {
+   "kind": "manual",
+   "id": "tincal",
+   "ru": "Бура",
+   "recipe": false
+  },
+  "Dogfish skin": {
+   "kind": "manual",
+   "id": "dogfishskin",
+   "ru": "Кожа акулы",
+   "recipe": false
+  },
+  "Sheet steel": {
+   "kind": "part",
+   "id": "Sheet steel",
+   "ru": "Листовая сталь",
+   "recipe": true
+  },
+  "Cow skin": {
+   "kind": "part",
+   "id": "Cow skin",
+   "ru": "Коровья шкура",
+   "recipe": true
+  },
+  "Eight-sided sword pommel": {
+   "kind": "part",
+   "id": "Eight-sided sword pommel",
+   "ru": "Восьмигранное навершие меча",
+   "recipe": true
+  },
+  "Horned sword guard": {
+   "kind": "part",
+   "id": "Horned sword guard",
+   "ru": "Рогатая гарда",
+   "recipe": true
+  },
+  "Deer skin": {
+   "kind": "part",
+   "id": "Deer skin",
+   "ru": "Оленья шкура",
+   "recipe": true
+  },
+  "fine silver": {
+   "kind": "good",
+   "id": "finesilver",
+   "ru": "Чистое серебро",
+   "recipe": false
+  },
+  "Decorated sword pommel": {
+   "kind": "part",
+   "id": "Decorated sword pommel",
+   "ru": "Украшенное навершие меча",
+   "recipe": true
+  },
+  "Pear sword pommel": {
+   "kind": "part",
+   "id": "Pear sword pommel",
+   "ru": "Грушевидное навершие меча",
+   "recipe": true
+  },
+  "Reinforced sword guard": {
+   "kind": "part",
+   "id": "Reinforced sword guard",
+   "ru": "Укреплённая гарда",
+   "recipe": true
+  },
+  "Enamel powder": {
+   "kind": "manual",
+   "id": "enamel",
+   "ru": "Порошок эмали",
+   "recipe": false
+  },
+  "Jasper": {
+   "kind": "manual",
+   "id": "jasper",
+   "ru": "Яшма",
+   "recipe": false
+  },
+  "Acidum chloridum": {
+   "kind": "manual",
+   "id": "acidum",
+   "ru": "Acidum chloridum",
+   "recipe": false
+  },
+  "pine resin": {
+   "kind": "good",
+   "id": "resin",
+   "ru": "Сосновая смола",
+   "recipe": false
+  },
+  "pure silver nuggets": {
+   "kind": "good",
+   "id": "silvernugget",
+   "ru": "Самородки чистого серебра",
+   "recipe": false
+  },
+  "gold ore": {
+   "kind": "good",
+   "id": "gold",
+   "ru": "Золотая руда",
+   "recipe": false
+  },
+  "Broken axe": {
+   "kind": "good",
+   "id": "relicaxe",
+   "ru": "Сломанный топор",
+   "recipe": false
+  },
+  "meteoric iron": {
+   "kind": "good",
+   "id": "meteoric",
+   "ru": "Метеоритное железо",
+   "recipe": false
+  },
+  "Dragon claw": {
+   "kind": "good",
+   "id": "relicclaw",
+   "ru": "Драконий коготь",
+   "recipe": false
+  },
+  "Rock Pitch": {
+   "kind": "manual",
+   "id": "rockpitch",
+   "ru": "Каменная смола",
+   "recipe": false
+  },
+  "Weapon stub": {
+   "kind": "good",
+   "id": "relicstub",
+   "ru": "Обломок оружия",
+   "recipe": false
+  },
+  "Henry's longsword": {
+   "kind": "part",
+   "id": "Henry's longsword",
+   "ru": "Длинный меч Индржиха",
+   "recipe": true
+  }
+ },
+ "recipes": [
+  {
+   "id": "jobtool:miner",
+   "en": "jobtool:miner",
+   "ru": "Кирка рудокопа",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "Scrap metal": 1,
+    "Iron": 1,
+    "coal": 4,
+    "logs": 1
+   },
+   "fee": 3,
+   "secs": 10,
+   "worth": 0
+  },
+  {
+   "id": "Training bludgeon",
+   "en": "Training bludgeon",
+   "ru": "Тренировочная дубина",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "coal": 1
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 1
+  },
+  {
+   "id": "Scrap metal",
+   "en": "Scrap metal",
+   "ru": "Железный лом",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 3,
+   "items": {
+    "iron ore": 1,
+    "coal": 1
+   },
+   "fee": 0,
+   "secs": 6,
+   "worth": 6
+  },
+  {
+   "id": "Fastening material",
+   "en": "Fastening material",
+   "ru": "Крепёж",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 5,
+   "items": {
+    "Iron": 1,
+    "coal": 1
+   },
+   "fee": 0,
+   "secs": 6,
+   "worth": 10
+  },
+  {
+   "id": "Farmer Matthew's pitchfork",
+   "en": "Farmer Matthew's pitchfork",
+   "ru": "Вилы крестьянина Матуша",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "coal": 1
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 3
+  },
+  {
+   "id": "Training axe",
+   "en": "Training axe",
+   "ru": "Тренировочный топор",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "coal": 1
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 3
+  },
+  {
+   "id": "Training longsword (plain)",
+   "en": "Training longsword (plain)",
+   "ru": "Учебный длинный меч (простая версия)",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "coal": 1
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 3
+  },
+  {
+   "id": "Staff",
+   "en": "Staff",
+   "ru": "Посох",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "coal": 1
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 3
+  },
+  {
+   "id": "Training sword",
+   "en": "Training sword",
+   "ru": "Тренировочный меч",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "coal": 1
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 3
+  },
+  {
+   "id": "Iron",
+   "en": "Iron",
+   "ru": "Железо",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 3,
+   "items": {
+    "iron ore": 2,
+    "coal": 1
+   },
+   "fee": 1,
+   "secs": 6,
+   "worth": 15
+  },
+  {
+   "id": "Torch",
+   "en": "Torch",
+   "ru": "Факел",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "coal": 1
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 6
+  },
+  {
+   "id": "Club",
+   "en": "Club",
+   "ru": "Дубинка",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "coal": 1
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 8
+  },
+  {
+   "id": "Antler shards",
+   "en": "Antler shards",
+   "ru": "Осколки рогов",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 2,
+   "items": {
+    "antlers": 1
+   },
+   "fee": 0,
+   "secs": 6,
+   "worth": 24
+  },
+  {
+   "id": "Old dagger",
+   "en": "Old dagger",
+   "ru": "Старый кинжал",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "coal": 1
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 20
+  },
+  {
+   "id": "Farmer's horseshoes",
+   "en": "Farmer's horseshoes",
+   "ru": "Крестьянские подковы",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "Scrap metal": 1
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 20
+  },
+  {
+   "id": "Work axe",
+   "en": "Work axe",
+   "ru": "Рабочий топор",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "Scrap metal": 2
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 25
+  },
+  {
+   "id": "Painted pavese",
+   "en": "Painted pavese",
+   "ru": "Расписная павеза",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "logs": 1
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 30
+  },
+  {
+   "id": "Knight's horseshoes",
+   "en": "Knight's horseshoes",
+   "ru": "Рыцарские подковы",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "Scrap metal": 2
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 40
+  },
+  {
+   "id": "Training longsword (reinforced)",
+   "en": "Training longsword (reinforced)",
+   "ru": "Учебный длинный меч (усиленная версия)",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "coal": 2
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 50
+  },
+  {
+   "id": "Homemade hunting sword",
+   "en": "Homemade hunting sword",
+   "ru": "Самодельный охотничий тесак",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "Scrap metal": 2,
+    "Fastening material": 1
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 50
+  },
+  {
+   "id": "Hunting sword",
+   "en": "Hunting sword",
+   "ru": "Охотничий тесак",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "steel": 2,
+    "Scrap metal": 1,
+    "Fastening material": 1
+   },
+   "fee": 2,
+   "secs": 10,
+   "worth": 82
+  },
+  {
+   "id": "Hunting sword (recipe 2)",
+   "en": "Hunting sword (recipe 2)",
+   "ru": "Охотничий тесак (рецепт 2)",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "Scrap metal": 1,
+    "steel": 1,
+    "coal": 3
+   },
+   "fee": 3,
+   "secs": 10,
+   "worth": 82
+  },
+  {
+   "id": "Burgher's hunting sword",
+   "en": "Burgher's hunting sword",
+   "ru": "Охотничий тесак горожанина",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "iron ore": 2,
+    "coal": 4
+   },
+   "fee": 3,
+   "secs": 10,
+   "worth": 214
+  },
+  {
+   "id": "Carpenter's axe",
+   "en": "Carpenter's axe",
+   "ru": "Топор плотника",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "Scrap metal": 1,
+    "Iron": 1,
+    "coal": 4,
+    "logs": 1
+   },
+   "fee": 3,
+   "secs": 10,
+   "worth": 216
+  },
+  {
+   "id": "Blacksmith's defender",
+   "en": "Blacksmith's defender",
+   "ru": "Защитный меч кузнеца",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "Ordinary sword guard": 1,
+    "Pig skin": 1,
+    "Coin sword pommel": 1,
+    "steel": 2,
+    "Scrap metal": 2
+   },
+   "fee": 1,
+   "secs": 10,
+   "worth": 336
+  },
+  {
+   "id": "Military sword",
+   "en": "Military sword",
+   "ru": "Боевой меч",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "Ordinary sword guard": 1,
+    "Pig skin": 1,
+    "Coin sword pommel": 1,
+    "steel": 1,
+    "Iron": 1
+   },
+   "fee": 6,
+   "secs": 10,
+   "worth": 367
+  },
+  {
+   "id": "Tournament practice sword",
+   "en": "Tournament practice sword",
+   "ru": "Турнирный тренировочный меч",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "iron ore": 3,
+    "coal": 5,
+    "logs": 1
+   },
+   "fee": 16,
+   "secs": 10,
+   "worth": 500
+  },
+  {
+   "id": "Coin sword pommel",
+   "en": "Coin sword pommel",
+   "ru": "Плоское навершие меча",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 2,
+   "items": {
+    "Iron": 1
+   },
+   "fee": 0,
+   "secs": 7,
+   "worth": 8
+  },
+  {
+   "id": "Ordinary sword guard",
+   "en": "Ordinary sword guard",
+   "ru": "Обычная гарда",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "Iron": 1,
+    "Scrap metal": 1
+   },
+   "fee": 0,
+   "secs": 7,
+   "worth": 6
+  },
+  {
+   "id": "Dagger",
+   "en": "Dagger",
+   "ru": "Кинжал",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "iron ore": 1,
+    "coal": 1
+   },
+   "fee": 0,
+   "secs": 8,
+   "worth": 23
+  },
+  {
+   "id": "Brunswick's dagger",
+   "en": "Brunswick's dagger",
+   "ru": "Кинжал Брунцвика",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "coal": 1
+   },
+   "fee": 1,
+   "secs": 12,
+   "worth": 23
+  },
+  {
+   "id": "Copper",
+   "en": "Copper",
+   "ru": "Медь",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "copper ore": 2,
+    "coal": 1
+   },
+   "fee": 0,
+   "secs": 7,
+   "worth": 27
+  },
+  {
+   "id": "Spiked horseshoes",
+   "en": "Spiked horseshoes",
+   "ru": "Подкова с зубцами",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "Scrap metal": 1,
+    "coal": 1
+   },
+   "fee": 1,
+   "secs": 12,
+   "worth": 45
+  },
+  {
+   "id": "Nobleman's horseshoes",
+   "en": "Nobleman's horseshoes",
+   "ru": "Подковы шляхтича",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "Iron": 1
+   },
+   "fee": 2,
+   "secs": 12,
+   "worth": 50
+  },
+  {
+   "id": "Pitchfork",
+   "en": "Pitchfork",
+   "ru": "Вилы",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "coal": 2
+   },
+   "fee": 1,
+   "secs": 12,
+   "worth": 62
+  },
+  {
+   "id": "Lovarian horseshoes",
+   "en": "Lovarian horseshoes",
+   "ru": "Ловарские подковы",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "Iron": 2
+   },
+   "fee": 2,
+   "secs": 12,
+   "worth": 80
+  },
+  {
+   "id": "Rondel dagger",
+   "en": "Rondel dagger",
+   "ru": "Кинжал-рондель",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "iron ore": 2,
+    "coal": 6
+   },
+   "fee": 3,
+   "secs": 12,
+   "worth": 250
+  },
+  {
+   "id": "Spiked bludgeon",
+   "en": "Spiked bludgeon",
+   "ru": "Шипастая дубина",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "iron ore": 3,
+    "coal": 5
+   },
+   "fee": 4,
+   "secs": 12,
+   "worth": 291
+  },
+  {
+   "id": "Knight's longsword",
+   "en": "Knight's longsword",
+   "ru": "Рыцарский длинный меч",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "Pig skin": 1,
+    "Coin sword pommel": 1,
+    "Straight sword guard": 1,
+    "steel": 3,
+    "Scrap metal": 2
+   },
+   "fee": 1,
+   "secs": 12,
+   "worth": 331
+  },
+  {
+   "id": "Cuman shashka",
+   "en": "Cuman shashka",
+   "ru": "Половецкая шашка",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "Iron": 1,
+    "Frankfurt steel": 2,
+    "Fastening material": 1,
+    "Copper": 1
+   },
+   "fee": 1,
+   "secs": 12,
+   "worth": 336
+  },
+  {
+   "id": "Competition sword",
+   "en": "Competition sword",
+   "ru": "Меч для состязания",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "steel": 2,
+    "Scrap metal": 1,
+    "Fastening material": 1,
+    "coal": 5,
+    "logs": 1
+   },
+   "fee": 6,
+   "secs": 12,
+   "worth": 336
+  },
+  {
+   "id": "Jimbo's marotte",
+   "en": "Jimbo's marotte",
+   "ru": "Шутовской жезл Джимбо",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "iron ore": 4,
+    "coal": 5,
+    "logs": 1
+   },
+   "fee": 4,
+   "secs": 12,
+   "worth": 365
+  },
+  {
+   "id": "Bearded axe",
+   "en": "Bearded axe",
+   "ru": "Бородатый топор",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "Scrap metal": 1,
+    "steel": 1,
+    "coal": 9,
+    "logs": 2
+   },
+   "fee": 8,
+   "secs": 12,
+   "worth": 485
+  },
+  {
+   "id": "Falchion",
+   "en": "Falchion",
+   "ru": "Фальшион",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "Iron": 1,
+    "Frankfurt steel": 3,
+    "Coin sword pommel": 1
+   },
+   "fee": 5,
+   "secs": 12,
+   "worth": 486
+  },
+  {
+   "id": "Light mace",
+   "en": "Light mace",
+   "ru": "Лёгкая булава",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "iron ore": 5,
+    "coal": 6,
+    "logs": 1
+   },
+   "fee": 15,
+   "secs": 12,
+   "worth": 574
+  },
+  {
+   "id": "Morgenstern",
+   "en": "Morgenstern",
+   "ru": "Моргенштерн",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "iron ore": 6,
+    "coal": 7,
+    "logs": 1
+   },
+   "fee": 26,
+   "secs": 12,
+   "worth": 828
+  },
+  {
+   "id": "Straight sword guard",
+   "en": "Straight sword guard",
+   "ru": "Прямая гарда",
+   "craft": "smithing",
+   "level": 3,
+   "yield": 1,
+   "items": {
+    "Iron": 1,
+    "Scrap metal": 1
+   },
+   "fee": 0,
+   "secs": 8,
+   "worth": 6
+  },
+  {
+   "id": "Heater shield",
+   "en": "Heater shield",
+   "ru": "Гербовый щит",
+   "craft": "smithing",
+   "level": 3,
+   "yield": 1,
+   "items": {
+    "logs": 3
+   },
+   "fee": 1,
+   "secs": 14,
+   "worth": 62
+  },
+  {
+   "id": "Billhook",
+   "en": "Billhook",
+   "ru": "Копьё с крюком",
+   "craft": "smithing",
+   "level": 3,
+   "yield": 1,
+   "items": {
+    "iron ore": 3,
+    "coal": 5
+   },
+   "fee": 4,
+   "secs": 14,
+   "worth": 279
+  },
+  {
+   "id": "Glaive",
+   "en": "Glaive",
+   "ru": "Глефа",
+   "craft": "smithing",
+   "level": 3,
+   "yield": 1,
+   "items": {
+    "iron ore": 4,
+    "coal": 5,
+    "logs": 1
+   },
+   "fee": 4,
+   "secs": 14,
+   "worth": 354
+  },
+  {
+   "id": "Common war hammer",
+   "en": "Common war hammer",
+   "ru": "Обычный боевой молот",
+   "craft": "smithing",
+   "level": 3,
+   "yield": 1,
+   "items": {
+    "iron ore": 8,
+    "coal": 10,
+    "logs": 2
+   },
+   "fee": 30,
+   "secs": 14,
+   "worth": 447
+  },
+  {
+   "id": "Brunswick's poleaxe",
+   "en": "Brunswick's poleaxe",
+   "ru": "Древковый топор Брунцвика",
+   "craft": "smithing",
+   "level": 3,
+   "yield": 1,
+   "items": {
+    "Fastening material": 1,
+    "Iron": 3,
+    "Frankfurt steel": 1,
+    "coal": 5,
+    "logs": 1
+   },
+   "fee": 6,
+   "secs": 14,
+   "worth": 478
+  },
+  {
+   "id": "Common sabre",
+   "en": "Common sabre",
+   "ru": "Обычная сабля",
+   "craft": "smithing",
+   "level": 3,
+   "yield": 1,
+   "items": {
+    "Fastening material": 1,
+    "Scrap metal": 1,
+    "Frankfurt steel": 2,
+    "coal": 12,
+    "logs": 2
+   },
+   "fee": 10,
+   "secs": 14,
+   "worth": 773
+  },
+  {
+   "id": "Zizka's mace",
+   "en": "Zizka's mace",
+   "ru": "Булава Жижки",
+   "craft": "smithing",
+   "level": 3,
+   "yield": 1,
+   "items": {
+    "iron ore": 7,
+    "coal": 10,
+    "logs": 1
+   },
+   "fee": 22,
+   "secs": 14,
+   "worth": 868
+  },
+  {
+   "id": "Raborsch butcher's axe",
+   "en": "Raborsch butcher's axe",
+   "ru": "Топор ратборжского мясника",
+   "craft": "smithing",
+   "level": 3,
+   "yield": 1,
+   "items": {
+    "iron ore": 8,
+    "coal": 10,
+    "logs": 1
+   },
+   "fee": 22,
+   "secs": 14,
+   "worth": 904
+  },
+  {
+   "id": "Dagger mace",
+   "en": "Dagger mace",
+   "ru": "Булава-кинжал",
+   "craft": "smithing",
+   "level": 3,
+   "yield": 1,
+   "items": {
+    "iron ore": 7,
+    "coal": 10,
+    "logs": 1
+   },
+   "fee": 26,
+   "secs": 14,
+   "worth": 942
+  },
+  {
+   "id": "Broad axe",
+   "en": "Broad axe",
+   "ru": "Широкий топор",
+   "craft": "smithing",
+   "level": 3,
+   "yield": 1,
+   "items": {
+    "Iron": 2,
+    "steel": 1,
+    "Fastening material": 1,
+    "coal": 13,
+    "logs": 2
+   },
+   "fee": 36,
+   "secs": 14,
+   "worth": 1073
+  },
+  {
+   "id": "Common mace",
+   "en": "Common mace",
+   "ru": "Обычная булава",
+   "craft": "smithing",
+   "level": 3,
+   "yield": 1,
+   "items": {
+    "iron ore": 8,
+    "coal": 9,
+    "logs": 2
+   },
+   "fee": 36,
+   "secs": 14,
+   "worth": 1139
+  },
+  {
+   "id": "Bailiff's mace",
+   "en": "Bailiff's mace",
+   "ru": "Булава рихтаржа",
+   "craft": "smithing",
+   "level": 3,
+   "yield": 1,
+   "items": {
+    "iron ore": 8,
+    "coal": 9,
+    "logs": 2
+   },
+   "fee": 36,
+   "secs": 14,
+   "worth": 1140
+  },
+  {
+   "id": "Godwin's longsword",
+   "en": "Godwin's longsword",
+   "ru": "Длинный меч Богуты",
+   "craft": "smithing",
+   "level": 3,
+   "yield": 1,
+   "items": {
+    "iron ore": 8,
+    "coal": 10,
+    "logs": 1
+   },
+   "fee": 50,
+   "secs": 14,
+   "worth": 1349
+  },
+  {
+   "id": "Horseman's pick",
+   "en": "Horseman's pick",
+   "ru": "Топор конника",
+   "craft": "smithing",
+   "level": 3,
+   "yield": 1,
+   "items": {
+    "Iron": 2,
+    "Frankfurt steel": 1,
+    "Fastening material": 1,
+    "coal": 12,
+    "logs": 3
+   },
+   "fee": 107,
+   "secs": 14,
+   "worth": 2218
+  },
+  {
+   "id": "Pear sword pommel",
+   "en": "Pear sword pommel",
+   "ru": "Грушевидное навершие меча",
+   "craft": "smithing",
+   "level": 4,
+   "yield": 2,
+   "items": {
+    "Iron": 1,
+    "Copper": 1
+   },
+   "fee": 0,
+   "secs": 9,
+   "worth": 16
+  },
+  {
+   "id": "Horned sword guard",
+   "en": "Horned sword guard",
+   "ru": "Рогатая гарда",
+   "craft": "smithing",
+   "level": 4,
+   "yield": 2,
+   "items": {
+    "steel": 1,
+    "Iron": 1
+   },
+   "fee": 0,
+   "secs": 9,
+   "worth": 16
+  },
+  {
+   "id": "Eight-sided sword pommel",
+   "en": "Eight-sided sword pommel",
+   "ru": "Восьмигранное навершие меча",
+   "craft": "smithing",
+   "level": 4,
+   "yield": 2,
+   "items": {
+    "Iron": 1,
+    "Copper": 1
+   },
+   "fee": 0,
+   "secs": 9,
+   "worth": 20
+  },
+  {
+   "id": "Frankfurt steel",
+   "en": "Frankfurt steel",
+   "ru": "Франкфуртская сталь",
+   "craft": "smithing",
+   "level": 4,
+   "yield": 2,
+   "items": {
+    "steel": 2,
+    "coal": 2,
+    "logs": 1
+   },
+   "fee": 0,
+   "secs": 9,
+   "worth": 40
+  },
+  {
+   "id": "Toledo steel",
+   "en": "Toledo steel",
+   "ru": "Толедская сталь",
+   "craft": "smithing",
+   "level": 4,
+   "yield": 2,
+   "items": {
+    "Frankfurt steel": 2,
+    "silver ore": 1,
+    "coal": 2
+   },
+   "fee": 0,
+   "secs": 9,
+   "worth": 70
+  },
+  {
+   "id": "Racing horseshoes",
+   "en": "Racing horseshoes",
+   "ru": "Подковы для скачек",
+   "craft": "smithing",
+   "level": 4,
+   "yield": 1,
+   "items": {
+    "Iron": 2,
+    "Frankfurt steel": 1,
+    "coal": 1
+   },
+   "fee": 4,
+   "secs": 16,
+   "worth": 150
+  },
+  {
+   "id": "Shell hunting sword",
+   "en": "Shell hunting sword",
+   "ru": "Охотничий тесак с ракушкой",
+   "craft": "smithing",
+   "level": 4,
+   "yield": 1,
+   "items": {
+    "Toledo steel": 2,
+    "Fastening material": 1,
+    "Antler shards": 2,
+    "Iron": 1
+   },
+   "fee": 1,
+   "secs": 16,
+   "worth": 583
+  },
+  {
+   "id": "Rider's war hammer",
+   "en": "Rider's war hammer",
+   "ru": "Боевой молот конника",
+   "craft": "smithing",
+   "level": 4,
+   "yield": 1,
+   "items": {
+    "steel": 5,
+    "coal": 9,
+    "logs": 2,
+    "hides": 1
+   },
+   "fee": 12,
+   "secs": 16,
+   "worth": 918
+  },
+  {
+   "id": "Opportunity",
+   "en": "Opportunity",
+   "ru": "Оппортунист",
+   "craft": "smithing",
+   "level": 4,
+   "yield": 1,
+   "items": {
+    "copper ore": 1,
+    "steel": 5,
+    "coal": 9,
+    "logs": 2,
+    "hides": 1
+   },
+   "fee": 14,
+   "secs": 16,
+   "worth": 963
+  },
+  {
+   "id": "Buchar mace",
+   "en": "Buchar mace",
+   "ru": "Бухарская булава",
+   "craft": "smithing",
+   "level": 4,
+   "yield": 1,
+   "items": {
+    "copper ore": 1,
+    "steel": 4,
+    "coal": 9,
+    "logs": 2,
+    "hides": 1
+   },
+   "fee": 12,
+   "secs": 16,
+   "worth": 980
+  },
+  {
+   "id": "Cuman fokos",
+   "en": "Cuman fokos",
+   "ru": "Половецкий фокош",
+   "craft": "smithing",
+   "level": 4,
+   "yield": 1,
+   "items": {
+    "Fastening material": 1,
+    "Iron": 1,
+    "Frankfurt steel": 1,
+    "copper ore": 1,
+    "steel": 3,
+    "coal": 11,
+    "hides": 1,
+    "logs": 3
+   },
+   "fee": 15,
+   "secs": 16,
+   "worth": 1121
+  },
+  {
+   "id": "Common longsword",
+   "en": "Common longsword",
+   "ru": "Обычный длинный меч",
+   "craft": "smithing",
+   "level": 4,
+   "yield": 1,
+   "items": {
+    "Iron": 2,
+    "Coin sword pommel": 1,
+    "Ordinary sword guard": 1,
+    "Pig skin": 1,
+    "steel": 5,
+    "copper ore": 1,
+    "coal": 10,
+    "logs": 2
+   },
+   "fee": 17,
+   "secs": 16,
+   "worth": 1239
+  },
+  {
+   "id": "Boleslav Bavor's sword",
+   "en": "Boleslav Bavor's sword",
+   "ru": "Меч Болеслава Бавора",
+   "craft": "smithing",
+   "level": 4,
+   "yield": 1,
+   "items": {
+    "copper ore": 1,
+    "steel": 7,
+    "coal": 11,
+    "logs": 3,
+    "hides": 1
+   },
+   "fee": 18,
+   "secs": 16,
+   "worth": 1253
+  },
+  {
+   "id": "Flanged mace",
+   "en": "Flanged mace",
+   "ru": "Пернач",
+   "craft": "smithing",
+   "level": 4,
+   "yield": 1,
+   "items": {
+    "copper ore": 1,
+    "steel": 7,
+    "coal": 12,
+    "logs": 3,
+    "hides": 1
+   },
+   "fee": 18,
+   "secs": 16,
+   "worth": 1419
+  },
+  {
+   "id": "Reinforced sword guard",
+   "en": "Reinforced sword guard",
+   "ru": "Укреплённая гарда",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 2,
+   "items": {
+    "steel": 1,
+    "Iron": 1
+   },
+   "fee": 0,
+   "secs": 10,
+   "worth": 16
+  },
+  {
+   "id": "Cuman shield",
+   "en": "Cuman shield",
+   "ru": "Половецкий щит",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 1,
+   "items": {
+    "logs": 4,
+    "hides": 1,
+    "leather": 1
+   },
+   "fee": 3,
+   "secs": 18,
+   "worth": 121
+  },
+  {
+   "id": "Skalitz knight's shield",
+   "en": "Skalitz knight's shield",
+   "ru": "Рыцарский щит из Скалицы",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 1,
+   "items": {
+    "logs": 3,
+    "hides": 1,
+    "steel": 1,
+    "leather": 1
+   },
+   "fee": 4,
+   "secs": 18,
+   "worth": 136
+  },
+  {
+   "id": "Bardiche",
+   "en": "Bardiche",
+   "ru": "Бердыш",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 1,
+   "items": {
+    "steel": 3,
+    "coal": 9,
+    "logs": 1,
+    "hafts": 1
+   },
+   "fee": 8,
+   "secs": 18,
+   "worth": 649
+  },
+  {
+   "id": "Voulge",
+   "en": "Voulge",
+   "ru": "Вульж",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 1,
+   "items": {
+    "steel": 3,
+    "coal": 9,
+    "logs": 1,
+    "hafts": 1
+   },
+   "fee": 8,
+   "secs": 18,
+   "worth": 649
+  },
+  {
+   "id": "Noble's hunting sword",
+   "en": "Noble's hunting sword",
+   "ru": "Панский охотничий тесак",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 1,
+   "items": {
+    "Copper": 1,
+    "Toledo steel": 2,
+    "Iron": 2,
+    "Fastening material": 1,
+    "Exotic wood": 1,
+    "leather": 1
+   },
+   "fee": 0,
+   "secs": 18,
+   "worth": 705
+  },
+  {
+   "id": "Heavy mace",
+   "en": "Heavy mace",
+   "ru": "Тяжёлая булава",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 1,
+   "items": {
+    "copper ore": 1,
+    "steel": 5,
+    "coal": 13,
+    "logs": 3,
+    "hides": 1,
+    "hafts": 1
+   },
+   "fee": 19,
+   "secs": 18,
+   "worth": 1325
+  },
+  {
+   "id": "Knight's war hammer",
+   "en": "Knight's war hammer",
+   "ru": "Рыцарский боевой молот",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 1,
+   "items": {
+    "copper ore": 1,
+    "steel": 6,
+    "coal": 13,
+    "logs": 3,
+    "hides": 1,
+    "hafts": 1
+   },
+   "fee": 20,
+   "secs": 18,
+   "worth": 1428
+  },
+  {
+   "id": "War hammer",
+   "en": "War hammer",
+   "ru": "Боевой молот",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 1,
+   "items": {
+    "copper ore": 1,
+    "steel": 6,
+    "coal": 13,
+    "logs": 4,
+    "hides": 1,
+    "hafts": 1
+   },
+   "fee": 21,
+   "secs": 18,
+   "worth": 1482
+  },
+  {
+   "id": "Calvaria axe",
+   "en": "Calvaria axe",
+   "ru": "Топор Кальвария",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 1,
+   "items": {
+    "Coloured gold": 2,
+    "Tincal": 1,
+    "Dogfish skin": 2,
+    "Exotic wood": 1,
+    "Toledo steel": 1,
+    "Sheet steel": 1,
+    "copper ore": 1,
+    "hafts": 1
+   },
+   "fee": 0,
+   "secs": 18,
+   "worth": 1527
+  },
+  {
+   "id": "Broadsword",
+   "en": "Broadsword",
+   "ru": "Палаш",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 1,
+   "items": {
+    "Straight sword guard": 1,
+    "Copper": 1,
+    "Cow skin": 1,
+    "Coin sword pommel": 1,
+    "Frankfurt steel": 1,
+    "Iron": 1,
+    "copper ore": 1,
+    "steel": 4,
+    "coal": 12,
+    "hides": 1,
+    "logs": 3,
+    "leather": 1
+   },
+   "fee": 38,
+   "secs": 18,
+   "worth": 1567
+  },
+  {
+   "id": "Boleslav Bavor's reforged sword",
+   "en": "Boleslav Bavor's reforged sword",
+   "ru": "Перекованный меч Болеслава Бавора",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 1,
+   "items": {
+    "Toledo steel": 1,
+    "Iron": 1,
+    "copper ore": 1,
+    "steel": 4,
+    "coal": 15,
+    "hides": 1,
+    "logs": 3,
+    "leather": 1
+   },
+   "fee": 34,
+   "secs": 18,
+   "worth": 1793
+  },
+  {
+   "id": "Lord Capon's longsword",
+   "en": "Lord Capon's longsword",
+   "ru": "Длинный меч пана Птачека",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 1,
+   "items": {
+    "copper ore": 1,
+    "steel": 8,
+    "coal": 12,
+    "logs": 4,
+    "hides": 1,
+    "leather": 1
+   },
+   "fee": 50,
+   "secs": 18,
+   "worth": 2047
+  },
+  {
+   "id": "Henry's longsword",
+   "en": "Henry's longsword",
+   "ru": "Длинный меч Индржиха",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 1,
+   "items": {
+    "copper ore": 1,
+    "steel": 8,
+    "coal": 12,
+    "logs": 4,
+    "hides": 1,
+    "leather": 1
+   },
+   "fee": 50,
+   "secs": 18,
+   "worth": 2047
+  },
+  {
+   "id": "Radzig Kobyla's longsword (Istvan)",
+   "en": "Radzig Kobyla's longsword (Istvan)",
+   "ru": "Длинный меч Рацека Кобылы",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 1,
+   "items": {
+    "copper ore": 1,
+    "steel": 8,
+    "coal": 12,
+    "logs": 4,
+    "hides": 1,
+    "leather": 1
+   },
+   "fee": 50,
+   "secs": 18,
+   "worth": 2047
+  },
+  {
+   "id": "Battle longsword",
+   "en": "Battle longsword",
+   "ru": "Боевой длинный меч",
+   "craft": "smithing",
+   "level": 5,
+   "yield": 1,
+   "items": {
+    "Cow skin": 1,
+    "Eight-sided sword pommel": 1,
+    "Horned sword guard": 1,
+    "Frankfurt steel": 3,
+    "Iron": 3,
+    "copper ore": 2,
+    "steel": 3,
+    "coal": 10,
+    "hides": 1,
+    "logs": 2,
+    "leather": 1
+   },
+   "fee": 56,
+   "secs": 18,
+   "worth": 2400
+  },
+  {
+   "id": "Knight shield",
+   "en": "Knight shield",
+   "ru": "Рыцарский щит",
+   "craft": "smithing",
+   "level": 6,
+   "yield": 1,
+   "items": {
+    "logs": 4,
+    "hides": 1,
+    "steel": 1,
+    "leather": 1
+   },
+   "fee": 4,
+   "secs": 20,
+   "worth": 126
+  },
+  {
+   "id": "Practice shield",
+   "en": "Practice shield",
+   "ru": "Тренировочный щит",
+   "craft": "smithing",
+   "level": 6,
+   "yield": 1,
+   "items": {
+    "logs": 4,
+    "hides": 1,
+    "steel": 1,
+    "leather": 1
+   },
+   "fee": 4,
+   "secs": 20,
+   "worth": 126
+  },
+  {
+   "id": "Ghostly horseshoes",
+   "en": "Ghostly horseshoes",
+   "ru": "Призрачные подковы",
+   "craft": "smithing",
+   "level": 6,
+   "yield": 1,
+   "items": {
+    "Iron": 2,
+    "Toledo steel": 1,
+    "copper ore": 1,
+    "steel": 1,
+    "coal": 8,
+    "logs": 1
+   },
+   "fee": 12,
+   "secs": 20,
+   "worth": 300
+  },
+  {
+   "id": "Emmeram's hunting sword",
+   "en": "Emmeram's hunting sword",
+   "ru": "Тесак Имрама",
+   "craft": "smithing",
+   "level": 6,
+   "yield": 1,
+   "items": {
+    "copper ore": 1,
+    "steel": 4,
+    "coal": 9,
+    "logs": 3,
+    "hides": 1,
+    "leather": 2
+   },
+   "fee": 15,
+   "secs": 20,
+   "worth": 1138
+  },
+  {
+   "id": "Executioner's axe",
+   "en": "Executioner's axe",
+   "ru": "Топор палача",
+   "craft": "smithing",
+   "level": 6,
+   "yield": 1,
+   "items": {
+    "Iron": 2,
+    "Toledo steel": 1,
+    "copper ore": 2,
+    "steel": 6,
+    "coal": 16,
+    "hides": 2,
+    "logs": 6,
+    "hafts": 2
+   },
+   "fee": 108,
+   "secs": 20,
+   "worth": 1427
+  },
+  {
+   "id": "Captain's mace",
+   "en": "Captain's mace",
+   "ru": "Булава сотника",
+   "craft": "smithing",
+   "level": 6,
+   "yield": 1,
+   "items": {
+    "copper ore": 1,
+    "steel": 9,
+    "coal": 15,
+    "logs": 5,
+    "hides": 2,
+    "hafts": 2
+   },
+   "fee": 26,
+   "secs": 20,
+   "worth": 1726
+  },
+  {
+   "id": "Basilard",
+   "en": "Basilard",
+   "ru": "Баселард",
+   "craft": "smithing",
+   "level": 6,
+   "yield": 1,
+   "items": {
+    "Fastening material": 1,
+    "Copper": 1,
+    "Exotic wood": 1,
+    "Toledo steel": 1,
+    "Iron": 1,
+    "copper ore": 2,
+    "steel": 5,
+    "coal": 19,
+    "hides": 2,
+    "logs": 5,
+    "leather": 2
+   },
+   "fee": 38,
+   "secs": 20,
+   "worth": 1866
+  },
+  {
+   "id": "Replica of the longsword \"Absolver\"",
+   "en": "Replica of the longsword \"Absolver\"",
+   "ru": "Копия длинного меча «Иску…»",
+   "craft": "smithing",
+   "level": 6,
+   "yield": 1,
+   "items": {
+    "Deer skin": 1,
+    "Eight-sided sword pommel": 1,
+    "Horned sword guard": 1,
+    "Frankfurt steel": 2,
+    "Iron": 2,
+    "copper ore": 2,
+    "steel": 5,
+    "coal": 15,
+    "hides": 1,
+    "logs": 5,
+    "leather": 2
+   },
+   "fee": 50,
+   "secs": 20,
+   "worth": 2451
+  },
+  {
+   "id": "Dry Devil's longsword",
+   "en": "Dry Devil's longsword",
+   "ru": "Длинный меч Сухого Черта",
+   "craft": "smithing",
+   "level": 6,
+   "yield": 1,
+   "items": {
+    "copper ore": 2,
+    "steel": 11,
+    "coal": 17,
+    "logs": 6,
+    "hides": 1,
+    "leather": 2
+   },
+   "fee": 57,
+   "secs": 20,
+   "worth": 2472
+  },
+  {
+   "id": "Raven's beak",
+   "en": "Raven's beak",
+   "ru": "Клюв ворона",
+   "craft": "smithing",
+   "level": 6,
+   "yield": 1,
+   "items": {
+    "copper ore": 2,
+    "steel": 10,
+    "coal": 16,
+    "logs": 6,
+    "hides": 1,
+    "hafts": 2
+   },
+   "fee": 54,
+   "secs": 20,
+   "worth": 2622
+  },
+  {
+   "id": "Decorated sword pommel",
+   "en": "Decorated sword pommel",
+   "ru": "Украшенное навершие меча",
+   "craft": "smithing",
+   "level": 7,
+   "yield": 2,
+   "items": {
+    "Copper": 1,
+    "fine silver": 2
+   },
+   "fee": 0,
+   "secs": 12,
+   "worth": 76
+  },
+  {
+   "id": "Guisarme",
+   "en": "Guisarme",
+   "ru": "Гизарма",
+   "craft": "smithing",
+   "level": 7,
+   "yield": 1,
+   "items": {
+    "steel": 4,
+    "coal": 11,
+    "logs": 2,
+    "hides": 1,
+    "hafts": 2
+   },
+   "fee": 13,
+   "secs": 22,
+   "worth": 1013
+  },
+  {
+   "id": "Noble's sword",
+   "en": "Noble's sword",
+   "ru": "Панский меч",
+   "craft": "smithing",
+   "level": 7,
+   "yield": 1,
+   "items": {
+    "Deer skin": 1,
+    "Decorated sword pommel": 1,
+    "Horned sword guard": 1,
+    "Toledo steel": 1,
+    "Iron": 1,
+    "copper ore": 2,
+    "steel": 8,
+    "coal": 24,
+    "hides": 3,
+    "logs": 9,
+    "leather": 3
+   },
+   "fee": 125,
+   "secs": 22,
+   "worth": 2078
+  },
+  {
+   "id": "Knight's axe",
+   "en": "Knight's axe",
+   "ru": "Рыцарский топор",
+   "craft": "smithing",
+   "level": 7,
+   "yield": 1,
+   "items": {
+    "Iron": 2,
+    "Toledo steel": 2,
+    "Copper": 1,
+    "Fastening material": 1,
+    "copper ore": 1,
+    "steel": 7,
+    "coal": 29,
+    "hides": 3,
+    "logs": 8,
+    "hafts": 3
+   },
+   "fee": 46,
+   "secs": 22,
+   "worth": 2483
+  },
+  {
+   "id": "Ataman's sabre",
+   "en": "Ataman's sabre",
+   "ru": "Атаманская сабля",
+   "craft": "smithing",
+   "level": 7,
+   "yield": 1,
+   "items": {
+    "Iron": 1,
+    "Toledo steel": 2,
+    "Deer skin": 1,
+    "Copper": 2,
+    "Fastening material": 1,
+    "copper ore": 2,
+    "steel": 8,
+    "coal": 24,
+    "hides": 2,
+    "logs": 7,
+    "leather": 3
+   },
+   "fee": 84,
+   "secs": 22,
+   "worth": 2690
+  },
+  {
+   "id": "Lord von Bergow's sword",
+   "en": "Lord von Bergow's sword",
+   "ru": "Меч пана Бергова",
+   "craft": "smithing",
+   "level": 7,
+   "yield": 1,
+   "items": {
+    "copper ore": 2,
+    "steel": 16,
+    "coal": 22,
+    "logs": 8,
+    "hides": 3,
+    "leather": 3
+   },
+   "fee": 142,
+   "secs": 22,
+   "worth": 2709
+  },
+  {
+   "id": "Broad longsword",
+   "en": "Broad longsword",
+   "ru": "Широкий длинный меч",
+   "craft": "smithing",
+   "level": 7,
+   "yield": 1,
+   "items": {
+    "Cow skin": 1,
+    "Pear sword pommel": 1,
+    "Ordinary sword guard": 1,
+    "Frankfurt steel": 3,
+    "Iron": 2,
+    "copper ore": 2,
+    "steel": 8,
+    "coal": 22,
+    "hides": 3,
+    "logs": 8,
+    "leather": 3
+   },
+   "fee": 219,
+   "secs": 22,
+   "worth": 2854
+  },
+  {
+   "id": "Lavish warhammer",
+   "en": "Lavish warhammer",
+   "ru": "Роскошный боевой молот",
+   "craft": "smithing",
+   "level": 7,
+   "yield": 1,
+   "items": {
+    "copper ore": 1,
+    "steel": 15,
+    "coal": 26,
+    "logs": 8,
+    "hides": 2,
+    "hafts": 3
+   },
+   "fee": 58,
+   "secs": 22,
+   "worth": 2897
+  },
+  {
+   "id": "Knight's sword",
+   "en": "Knight's sword",
+   "ru": "Рыцарский меч",
+   "craft": "smithing",
+   "level": 7,
+   "yield": 1,
+   "items": {
+    "Coin sword pommel": 1,
+    "Reinforced sword guard": 1,
+    "Frankfurt steel": 2,
+    "Scrap metal": 2,
+    "Cow skin": 1,
+    "copper ore": 2,
+    "steel": 8,
+    "coal": 24,
+    "hides": 2,
+    "logs": 8,
+    "leather": 3
+   },
+   "fee": 153,
+   "secs": 22,
+   "worth": 3047
+  },
+  {
+   "id": "Ornate mace",
+   "en": "Ornate mace",
+   "ru": "Украшенная булава",
+   "craft": "smithing",
+   "level": 7,
+   "yield": 1,
+   "items": {
+    "copper ore": 1,
+    "steel": 14,
+    "coal": 26,
+    "logs": 8,
+    "hides": 3,
+    "hafts": 3
+   },
+   "fee": 40,
+   "secs": 22,
+   "worth": 3104
+  },
+  {
+   "id": "Lion's roar Kilij",
+   "en": "Lion's roar Kilij",
+   "ru": "Кылыч «Львиный рык»",
+   "craft": "smithing",
+   "level": 7,
+   "yield": 1,
+   "items": {
+    "Coloured gold": 2,
+    "Enamel powder": 1,
+    "Jasper": 2,
+    "Acidum chloridum": 1,
+    "Exotic wood": 1,
+    "Dogfish skin": 2,
+    "Toledo steel": 2,
+    "copper ore": 1,
+    "leather": 1
+   },
+   "fee": 0,
+   "secs": 22,
+   "worth": 3205
+  },
+  {
+   "id": "Sheet steel",
+   "en": "Sheet steel",
+   "ru": "Листовая сталь",
+   "craft": "smithing",
+   "level": 8,
+   "yield": 2,
+   "items": {
+    "Toledo steel": 2,
+    "coal": 3
+   },
+   "fee": 0,
+   "secs": 12,
+   "worth": 84
+  },
+  {
+   "id": "Trollbane hammer",
+   "en": "Trollbane hammer",
+   "ru": "Молот «Троллья погибель»",
+   "craft": "smithing",
+   "level": 8,
+   "yield": 1,
+   "items": {
+    "silver ore": 1,
+    "steel": 30,
+    "hides": 4,
+    "pine resin": 7,
+    "hafts": 6,
+    "pure silver nuggets": 1
+   },
+   "fee": 64,
+   "secs": 24,
+   "worth": 1854
+  },
+  {
+   "id": "Owl’s Claw sabre",
+   "en": "Owl’s Claw sabre",
+   "ru": "Сабля «Коготь Филина»",
+   "craft": "smithing",
+   "level": 8,
+   "yield": 1,
+   "items": {
+    "silver ore": 1,
+    "steel": 31,
+    "hides": 4,
+    "leather": 9,
+    "pine resin": 7,
+    "pure silver nuggets": 1
+   },
+   "fee": 64,
+   "secs": 24,
+   "worth": 2959
+  },
+  {
+   "id": "Sword of Sir Valentine",
+   "en": "Sword of Sir Valentine",
+   "ru": "Меч пана Валентина",
+   "craft": "smithing",
+   "level": 8,
+   "yield": 1,
+   "items": {
+    "Copper": 1,
+    "Straight sword guard": 1,
+    "Cow skin": 1,
+    "Coin sword pommel": 1,
+    "Frankfurt steel": 1,
+    "Scrap metal": 1,
+    "silver ore": 1,
+    "steel": 33,
+    "leather": 13,
+    "coal": 27,
+    "pure silver nuggets": 1
+   },
+   "fee": 160,
+   "secs": 24,
+   "worth": 3081
+  },
+  {
+   "id": "Duelling longsword",
+   "en": "Duelling longsword",
+   "ru": "Дуэльный длинный меч",
+   "craft": "smithing",
+   "level": 8,
+   "yield": 1,
+   "items": {
+    "Deer skin": 1,
+    "Horned sword guard": 1,
+    "Pear sword pommel": 1,
+    "Toledo steel": 3,
+    "Iron": 2,
+    "silver ore": 1,
+    "steel": 33,
+    "leather": 13,
+    "coal": 24,
+    "pure silver nuggets": 1
+   },
+   "fee": 309,
+   "secs": 24,
+   "worth": 3662
+  },
+  {
+   "id": "Four Evangelists' longsword",
+   "en": "Four Evangelists' longsword",
+   "ru": "Длинный меч четырёх евангелистов (9 ур.)",
+   "craft": "smithing",
+   "level": 9,
+   "yield": 1,
+   "items": {
+    "silver ore": 3,
+    "gold ore": 1,
+    "steel": 65,
+    "hides": 9,
+    "leather": 19,
+    "pine resin": 16,
+    "pure silver nuggets": 2
+   },
+   "fee": 490,
+   "secs": 26,
+   "worth": 3311
+  },
+  {
+   "id": "Master Menhart's longsword",
+   "en": "Master Menhart's longsword",
+   "ru": "Длинный меч мастера Менхарда",
+   "craft": "smithing",
+   "level": 9,
+   "yield": 1,
+   "items": {
+    "silver ore": 2,
+    "gold ore": 1,
+    "steel": 65,
+    "hides": 9,
+    "leather": 19,
+    "pine resin": 16,
+    "pure silver nuggets": 2
+   },
+   "fee": 424,
+   "secs": 26,
+   "worth": 5057
+  },
+  {
+   "id": "Madman's longsword",
+   "en": "Madman's longsword",
+   "ru": "Длинный меч безумца",
+   "craft": "smithing",
+   "level": 9,
+   "yield": 1,
+   "items": {
+    "Fastening material": 1,
+    "Frankfurt steel": 3,
+    "silver ore": 2,
+    "gold ore": 1,
+    "steel": 50,
+    "leather": 20,
+    "coal": 36,
+    "pure silver nuggets": 2
+   },
+   "fee": 485,
+   "secs": 26,
+   "worth": 5083
+  },
+  {
+   "id": "Adorned axe (from the relic)",
+   "en": "Adorned axe (from the relic)",
+   "ru": "Украшенный топор (из реликвии)",
+   "craft": "smithing",
+   "level": 10,
+   "yield": 1,
+   "items": {
+    "Broken axe": 1,
+    "Fastening material": 1,
+    "steel": 24,
+    "coal": 20,
+    "hafts": 7,
+    "pure silver nuggets": 2,
+    "meteoric iron": 1
+   },
+   "fee": 46,
+   "secs": 28,
+   "worth": 700
+  },
+  {
+   "id": "Adorned axe (replica)",
+   "en": "Adorned axe (replica)",
+   "ru": "Украшенный топор (копия)",
+   "craft": "smithing",
+   "level": 10,
+   "yield": 1,
+   "items": {
+    "Fastening material": 1,
+    "steel": 39,
+    "coal": 32,
+    "hafts": 11,
+    "pure silver nuggets": 2,
+    "meteoric iron": 1
+   },
+   "fee": 75,
+   "secs": 28,
+   "worth": 700
+  },
+  {
+   "id": "Dragon fang Axe",
+   "en": "Dragon fang Axe",
+   "ru": "Топор «Драконий зуб»",
+   "craft": "smithing",
+   "level": 10,
+   "yield": 1,
+   "items": {
+    "Toledo steel": 2,
+    "Deer skin": 1,
+    "Fastening material": 2,
+    "Iron": 2,
+    "Exotic wood": 2,
+    "Dragon claw": 1,
+    "steel": 36,
+    "coal": 26,
+    "hafts": 11,
+    "pure silver nuggets": 2,
+    "meteoric iron": 1
+   },
+   "fee": 93,
+   "secs": 28,
+   "worth": 1444
+  },
+  {
+   "id": "Poleaxe",
+   "en": "Poleaxe",
+   "ru": "Полэкс",
+   "craft": "smithing",
+   "level": 10,
+   "yield": 1,
+   "items": {
+    "silver ore": 1,
+    "gold ore": 1,
+    "steel": 38,
+    "hides": 5,
+    "pine resin": 9,
+    "hafts": 8,
+    "pure silver nuggets": 2,
+    "meteoric iron": 1
+   },
+   "fee": 80,
+   "secs": 28,
+   "worth": 1656
+  },
+  {
+   "id": "St. George's sword",
+   "en": "St. George's sword",
+   "ru": "Меч Святого Георгия",
+   "craft": "smithing",
+   "level": 10,
+   "yield": 1,
+   "items": {
+    "Coloured gold": 2,
+    "Rock Pitch": 1,
+    "Enamel powder": 2,
+    "Exotic wood": 1,
+    "Straight sword guard": 1,
+    "Decorated sword pommel": 1,
+    "Toledo steel": 2,
+    "silver ore": 1,
+    "steel": 26,
+    "leather": 11,
+    "coal": 19,
+    "pure silver nuggets": 2,
+    "meteoric iron": 1
+   },
+   "fee": 92,
+   "secs": 24,
+   "worth": 1866
+  },
+  {
+   "id": "Basilisk warhammer",
+   "en": "Basilisk warhammer",
+   "ru": "Боевой молот «Василиск»",
+   "craft": "smithing",
+   "level": 10,
+   "yield": 1,
+   "items": {
+    "silver ore": 3,
+    "gold ore": 1,
+    "steel": 71,
+    "hides": 10,
+    "pine resin": 17,
+    "hafts": 15,
+    "pure silver nuggets": 2,
+    "meteoric iron": 1
+   },
+   "fee": 554,
+   "secs": 28,
+   "worth": 2550
+  },
+  {
+   "id": "Longsword of the Four Evangelists",
+   "en": "Longsword of the Four Evangelists",
+   "ru": "Длинный меч четырёх евангелистов (10 ур.)",
+   "craft": "smithing",
+   "level": 10,
+   "yield": 1,
+   "items": {
+    "Weapon stub": 1,
+    "Frankfurt steel": 2,
+    "Iron": 2,
+    "Acidum chloridum": 1,
+    "Enamel powder": 1,
+    "steel": 55,
+    "leather": 23,
+    "coal": 41,
+    "pure silver nuggets": 2,
+    "meteoric iron": 1
+   },
+   "fee": 636,
+   "secs": 28,
+   "worth": 3311
+  },
+  {
+   "id": "Lingua belli longsword",
+   "en": "Lingua belli longsword",
+   "ru": "Длинный меч Lingua belli",
+   "craft": "smithing",
+   "level": 10,
+   "yield": 1,
+   "items": {
+    "Acidum chloridum": 1,
+    "Tincal": 2,
+    "Coloured gold": 1,
+    "Horned sword guard": 1,
+    "Eight-sided sword pommel": 1,
+    "Toledo steel": 2,
+    "Sheet steel": 1,
+    "silver ore": 3,
+    "gold ore": 1,
+    "steel": 54,
+    "leather": 22,
+    "coal": 39,
+    "pure silver nuggets": 2,
+    "meteoric iron": 1
+   },
+   "fee": 881,
+   "secs": 28,
+   "worth": 5204
+  },
+  {
+   "id": "Henry's sword reforged",
+   "en": "Henry's sword reforged",
+   "ru": "Перекованный меч Индржиха",
+   "craft": "smithing",
+   "level": 10,
+   "yield": 1,
+   "items": {
+    "Henry's longsword": 1,
+    "Toledo steel": 3,
+    "steel": 48,
+    "leather": 23,
+    "coal": 48,
+    "pure silver nuggets": 2,
+    "meteoric iron": 1
+   },
+   "fee": 1377,
+   "secs": 28,
+   "worth": 5588
+  },
+  {
+   "id": "steel",
+   "en": "steel",
+   "ru": "Сталь",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 2,
+   "items": {
+    "iron ore": 3,
+    "coal": 2
+   },
+   "fee": 0,
+   "secs": 0,
+   "worth": 0,
+   "aux": true
+  },
+  {
+   "id": "found horseshoes",
+   "en": "found horseshoes",
+   "ru": "Найденные подковы",
+   "craft": "smithing",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "Scrap metal": 1
+   },
+   "fee": 0,
+   "secs": 0,
+   "worth": 0,
+   "aux": true
+  },
+  {
+   "id": "holy nails",
+   "en": "holy nails",
+   "ru": "Святые гвозди",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "Iron": 1
+   },
+   "fee": 0,
+   "secs": 0,
+   "worth": 0,
+   "aux": true
+  },
+  {
+   "id": "broken crankshafts",
+   "en": "broken crankshafts",
+   "ru": "Сломанные железные стержни",
+   "craft": "smithing",
+   "level": 2,
+   "yield": 1,
+   "items": {
+    "Iron": 1,
+    "Scrap metal": 1
+   },
+   "fee": 0,
+   "secs": 0,
+   "worth": 0,
+   "aux": true
+  },
+  {
+   "id": "ghostly horseshoes",
+   "en": "ghostly horseshoes",
+   "ru": "Призрачные подковы",
+   "craft": "smithing",
+   "level": 6,
+   "yield": 1,
+   "items": {
+    "Iron": 1,
+    "silver ore": 1
+   },
+   "fee": 0,
+   "secs": 0,
+   "worth": 0,
+   "aux": true
+  },
+  {
+   "id": "leather",
+   "en": "leather",
+   "ru": "Кожа",
+   "craft": "tailoring",
+   "level": 1,
+   "yield": 2,
+   "items": {
+    "hides": 1
+   },
+   "fee": 0,
+   "secs": 0,
+   "worth": 0,
+   "aux": true
+  },
+  {
+   "id": "Pig skin",
+   "en": "Pig skin",
+   "ru": "Свиная кожа",
+   "craft": "tailoring",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "hides": 1
+   },
+   "fee": 0,
+   "secs": 0,
+   "worth": 0,
+   "aux": true
+  },
+  {
+   "id": "Cow skin",
+   "en": "Cow skin",
+   "ru": "Коровья шкура",
+   "craft": "tailoring",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "hides": 2
+   },
+   "fee": 0,
+   "secs": 0,
+   "worth": 0,
+   "aux": true
+  },
+  {
+   "id": "Deer skin",
+   "en": "Deer skin",
+   "ru": "Оленья шкура",
+   "craft": "tailoring",
+   "level": 1,
+   "yield": 1,
+   "items": {
+    "hides": 2,
+    "pine resin": 1
+   },
+   "fee": 0,
+   "secs": 0,
+   "worth": 0,
+   "aux": true
+  }
+ ]
+}

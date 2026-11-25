@@ -1,0 +1,33 @@
+name: prices
+
+# The realm API does not allow other sites to read it from a browser (no CORS),
+# so this copies the prices into the "prices" branch, which the page reads.
+on:
+  schedule:
+    - cron: "7,37 * * * *"   # every 30 minutes
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prices
+  cancel-in-progress: true
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch prices
+        run: python3 tools/fetch_prices.py ru > /tmp/prices.json
+      - name: Publish to the prices branch
+        run: |
+          mkdir out && cp /tmp/prices.json out/prices.json && cd out
+          git init -q -b prices
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add prices.json
+          git commit -q -m "prices $(date -u +%FT%TZ)"
+          git push -q -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" prices
