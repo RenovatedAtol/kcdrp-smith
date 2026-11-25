@@ -118,3 +118,5 @@ dialog::backdrop { background: rgba(0,0,0,.6); }
 .rb-card li:first-child { border-top: none; }
 .rb-no { flex: 0 0 22px; height: 22px; border-radius: 11px; background: #4a3a29; color: var(--gold); display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
 .rb-nums { display: block; font-size: 13px; margin-top: 2px; }
+.item-pack { color: var(--dim); }
+.item-pack input { width: 80px; }

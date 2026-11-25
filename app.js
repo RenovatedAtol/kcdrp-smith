@@ -17,7 +17,7 @@ const MIN_LEVEL = 2;
 const STORE = "kcdrp-smith-v1";
 const DEFAULTS = {
   buySource: "avg", cap: 450, packFee: 10, filler: "coal", ov: {}, excl: [], level: "all", search: "",
-  onlyFit: false, hideNA: true, hideParts: false, sort: { key: "eff", dir: -1 }, cart: [], tab: "items", origin: "Kuttenberg", stock: 2, hire: false,
+  onlyFit: false, hideNA: true, hideParts: false, sort: { key: "eff", dir: -1 }, cart: [], itemPack: {}, tab: "items", origin: "Kuttenberg", stock: 2, hire: false,
 };
 
 let DATA = null;            // data/smithing.json
@@ -165,8 +165,15 @@ function recipeCost(r, depth = 0) {
   }
   return t / r.yield;
 }
+// how many times the bench fee counts in a trade pack, by the piece's level. Read off the game's packing window
+// (2026-11-25): levels 1-3 once (Old dagger 3, Pitchfork 5, Broad axe 84.5), level 4 twice (Rider's war hammer
+// 100.5, Flanged mace 145.5). Levels 5-8 not checked yet: assumed twice.
+const FEE_IN_PACK = (level) => (level >= 4 ? 2 : 1);
+const packFeeOf = (r) => r.fee * FEE_IN_PACK(r.level);
+const GUESS_TAG = '<span class="tag na" title="С 5-го уровня двойная плата станка в грузе не проверена в игре. Проверьте: положите предмет в ящик и впишите число из «Будет взято» в его расчёт.">не проверено</span>';
 function recipePack(r, depth = 0) {
-  let t = r.fee;
+  if (depth === 0 && num(S.itemPack && S.itemPack[r.id]) != null) return S.itemPack[r.id];   // the value read in the game
+  let t = packFeeOf(r);
   for (const [k, q] of Object.entries(r.items)) {
     const p = packOf(k, depth);
     if (p == null) return null;
@@ -196,6 +203,8 @@ function filler() {
 function evaluate(r, fill) {
   const M = recipeCost(r), P = recipePack(r);
   const res = { r, M, P, eff: M && P != null ? P / M : null, loss: M != null && P != null ? M - P : null };
+  // levels 5+ count the bench fee twice by assumption only, unless the player typed the game's value
+  res.guess = r.level >= 5 && r.fee > 0 && num(S.itemPack && S.itemPack[r.id]) == null;
   if (M == null || P == null || P <= 0) { res.na = true; return res; }
   const cap = S.cap, fee = packFee();
   if (P > cap + 1e-9) {
@@ -280,7 +289,7 @@ function render() {
     if (!c.length) { bh += `<tr class="na"><td></td><td class="n">${L}</td><td colspan="8">ни один доступный предмет не помещается в ящик</td></tr>`; continue; }
     c.sort((a, b) => b.eff - a.eff || b.P - a.P);
     const x = c[0];
-    bh += `<tr><td>${addBtn(x)}</td><td class="n">${L}</td><td>${nameCell(x.r)}</td><td class="n">${fmt(x.M)}</td><td class="n">${fmt(x.P)}</td><td class="n ${effClass(x.eff)}">${fmt(x.eff * 100)}%</td><td class="n">${fmt(x.loss)}</td><td>${crateText(x)}</td><td class="n">${fmt(x.crate)}</td><td class="n">${sellAtHtml(x.sellAt, x.worth)}</td></tr>`;
+    bh += `<tr><td>${addBtn(x)}</td><td class="n">${L}</td><td>${nameCell(x.r)}</td><td class="n">${fmt(x.M)}</td><td class="n">${fmt(x.P)}${x.guess ? " " + GUESS_TAG : ""}</td><td class="n ${effClass(x.eff)}">${fmt(x.eff * 100)}%</td><td class="n">${fmt(x.loss)}</td><td>${crateText(x)}</td><td class="n">${fmt(x.crate)}</td><td class="n">${sellAtHtml(x.sellAt, x.worth)}</td></tr>`;
   }
   if (fill) {
     const nb = Math.ceil(S.cap / fill.pack - 1e-9), fc = nb * fill.cost + packFee();
@@ -308,7 +317,7 @@ function render() {
     const na = x.na ? ' <span class="tag na">нет цены</span>' : "";
     h += `<tr class="r${x.na ? " na" : ""}" data-id="${esc(x.r.id)}">
       <td>${addBtn(x)}</td><td class="n">${x.r.level}</td><td>${nameCell(x.r, na)}</td><td class="mats">${esc(matsText(x.r))}</td>
-      <td class="n">${fmt(x.r.fee / x.r.yield)}</td><td class="n">${fmt(x.M)}</td><td class="n">${fmt(x.P)}</td>
+      <td class="n">${fmt(x.r.fee / x.r.yield)}</td><td class="n">${fmt(x.M)}</td><td class="n">${fmt(x.P)}${x.guess ? " " + GUESS_TAG : ""}</td>
       <td class="n ${effClass(x.eff)}">${x.eff != null ? fmt(x.eff * 100) + "%" : "—"}</td><td class="n">${fmt(x.loss)}</td>
       <td>${crateText(x)}</td><td class="n">${fmt(x.crate)}</td><td class="n">${x.na ? "—" : sellAtHtml(x.sellAt, x.worth)}</td></tr>`;
     if (open.has(x.r.id)) h += `<tr class="detail"><td></td><td></td><td colspan="${COLS.length - 1}">${breakdown(x.r)}</td></tr>`;
@@ -331,8 +340,12 @@ function breakdown(r) {
     h += `<tr><td>${matName(k)}</td><td class="n">${q}</td><td class="src-tag">${c.src ? SRC[c.src] : "нет цены"}</td>
       <td class="n">${fmt(c.v, 2)}</td><td class="n">${fmt(c.v != null ? c.v * q : null)}</td><td class="n">${fmt(p, 2)}</td><td class="n">${fmt(p != null ? p * q : null)}</td></tr>`;
   }
-  h += `<tr><td>Плата станка</td><td></td><td></td><td></td><td class="n">${fmt(r.fee)}</td><td></td><td class="n">${fmt(r.fee)}</td></tr>`;
+  const fm = FEE_IN_PACK(r.level);
+  h += `<tr><td>Плата станка</td><td></td><td></td><td></td><td class="n">${fmt(r.fee)}</td><td class="n src-tag">${fm > 1 ? "×" + fm : ""}</td><td class="n">${fmt(packFeeOf(r))}</td></tr>`;
+  if (fm > 1) h += `<tr><td colspan="7" class="src-tag">С 4-го уровня сервер засчитывает плату станка в груз дважды (проверено на 4-м уровне; для 5–8 — предположение).</td></tr>`;
   if (r.yield > 1) h += `<tr><td colspan="7" class="src-tag">Выход ${r.yield} шт. — итог делится на ${r.yield}.</td></tr>`;
+  const own = S.itemPack && S.itemPack[r.id];
+  h += `<tr><td colspan="7" class="item-pack">В груз по игре за 1 шт.: <input type="number" step="0.5" min="0" data-ipack="${esc(r.id)}" value="${own != null ? own : ""}" placeholder="как в «Будет взято»"> <span class="src-tag">${own != null ? "сайт считает этот предмет по вашему числу — очистите поле, чтобы вернуть расчёт" : "впишите, если в игре другое число"}</span></td></tr>`;
   return h + "</table>";
 }
 
@@ -729,7 +742,15 @@ function bind() {
   $("hideParts").onchange = (e) => set("hideParts", e.target.checked);
   $("levels").onclick = (e) => { const l = e.target.dataset.l; if (l) { S.level = l; save(); drawLevels(); render(); } };
   $("excluded").onclick = (e) => { const k = e.target.dataset.k; if (k) set("excl", S.excl.filter((x) => x !== k)); };
+  $("recipes").addEventListener("change", (e) => {
+    const id = e.target.dataset.ipack;
+    if (id == null) return;
+    S.itemPack = Object.assign({}, S.itemPack);
+    if (e.target.value === "") delete S.itemPack[id]; else S.itemPack[id] = Math.max(0, +e.target.value);
+    save(); render();
+  });
   $("recipes").onclick = (e) => {
+    if (e.target.dataset.ipack != null) return;
     if (onAdd(e)) return;
     const th = e.target.closest("th.sort");
     if (th) { const k = th.dataset.k; S.sort = { key: k, dir: S.sort.key === k ? -S.sort.dir : (k === "name" || k === "level" ? 1 : -1) }; save(); render(); return; }
