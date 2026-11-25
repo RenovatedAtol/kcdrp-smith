@@ -7,8 +7,9 @@ const PRICE_SOURCES = [
   // fallback: DanekKuznec's hourly copy of the auction (no realm prices in it)
   { url: "https://raw.githubusercontent.com/DanekKuznec/kcd2-rp-crafting/prices/auction.json", kind: "danek", label: "копия DanekKuznec (без цен казны)" },
 ];
-// pack prices of goods the auction has no "instant" figure for (from the game's packing window)
-const DEFAULT_PACK = { steel: 9.5, haft: 6, foundhorseshoe: 3, holynail: 4, brokenrod: 6, ghosthorseshoe: 38 };
+// pack prices of goods the auction has no "instant" figure for, read off the game's packing windows
+// (2026-11-25). The API has no exact pack price: "instant" matches the smith's raw goods, not all goods.
+const DEFAULT_PACK = { steel: 9.5, haft: 6, foundhorseshoe: 3, holynail: 4, brokenrod: 6, ghosthorseshoe: 38, leather: 6 };
 // levels 9 and 10 are left out: every piece of theirs is worth several crates and would mostly burn
 const MAX_LEVEL = 8;
 const STORE = "kcdrp-smith-v1";
@@ -522,9 +523,9 @@ function renderPricesDialog() {
   let rows = [...ids].map((id) => ({ id, ru: ruOf(id), m: SERVER.market[id] || {}, a: SERVER.auction[id] || {} }))
     .filter((x) => (!smith || smithIds.has(x.id)) && (!q || x.ru.toLowerCase().includes(q) || x.id.includes(q)))
     .sort((x, y) => x.ru.localeCompare(y.ru, "ru"));
-  let h = `<tr><th>Товар</th><th class="n">Корона продаёт</th><th class="n">Рыночная цена</th><th class="n">Аукцион ср.</th><th class="n">Аукцион мин.</th><th class="n">В груз</th><th class="n">Выставлено</th><th class="n">Продано</th></tr>`;
+  let h = `<tr><th>Товар</th><th class="n">Корона продаёт</th><th class="n">Рыночная цена</th><th class="n">Аукцион ср.</th><th class="n">Аукцион мин.</th><th class="n">В груз*</th><th class="n">Выставлено</th><th class="n">Продано</th></tr>`;
   for (const x of rows) {
-    const pack = num(x.a.instant) > 0 ? x.a.instant : null;
+    const pack = serverPack(x.id);
     h += `<tr><td><span class="mn">${iconHtml(iconOf(x.id), x.ru, "ico sm")}<span>${esc(x.ru)}</span></span></td><td class="n">${fmt(num(x.m.buy) > 0 ? x.m.buy : null, 2)}</td><td class="n">${fmt(num(x.m.price) > 0 ? x.m.price : null, 2)}</td>
       <td class="n">${fmt(num(x.a.avg) > 0 ? x.a.avg : null, 2)}</td><td class="n">${fmt(num(x.a.low) > 0 ? x.a.low : null, 2)}</td><td class="n">${fmt(pack, 2)}</td>
       <td class="n">${x.a.qty != null ? fmt(x.a.qty, 0) : "—"}</td><td class="n">${x.a.sold != null ? fmt(x.a.sold, 0) : "—"}</td></tr>`;
@@ -534,7 +535,9 @@ function renderPricesDialog() {
   const noCrown = !Object.keys(SERVER.market).length;
   $("pricesInfo").innerHTML = (SERVER.updated ? `Данные сервера от ${new Date(SERVER.updated).toLocaleString("ru-RU")} · ${esc(SERVER.label)}. ` : "Цены сервера не загружены. ") +
     (noCrown ? '<b>Цен короны в этом источнике нет.</b> ' : "") +
-    "«Корона продаёт» — цена покупки у королевства; «В груз» — во сколько товар засчитывается в торговый груз; «—» — нет данных. Это цены сервера без ваших правок.";
+    "<b>«Корона продаёт»</b> — сколько вы платите, покупая товар у королевства. <b>«В груз»</b> — сколько одна штука засчитывается в стоимость торгового ящика. " +
+    "* Точной цены в грузе API сервера не даёт: здесь оценка (поле <code>instant</code> аукциона или значение из окна упаковки, иначе рыночная цена). " +
+    "Для кузнечного сырья она совпадает с игрой, для товаров других ремёсел может отличаться — точное число видно в окне упаковки («Что принести»). «—» — нет данных. Цены сервера без ваших правок.";
 }
 
 // ---------------------------------------------------------------- events
