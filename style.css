@@ -130,7 +130,7 @@ dialog::backdrop { background: rgba(0,0,0,.6); }
 .pack-info .en { font-size: 12px; }
 .na-hint { background: var(--panel); border: 1px solid #5a4630; border-radius: 8px; padding: 8px 12px; color: var(--text); }
 .na-hint button { margin-left: 6px; }
-.stale { color: var(--bad); font-weight: 600; margin: 6px 0 8px; }
+.stale { color: var(--bad); font-weight: 600; font-size: 17px; margin: 6px 0 8px; }
 .stale-btn { margin-left: 8px; }
 .no-pack { display: block; color: var(--bad); font-weight: 600; }
 p.no-pack { margin: 0 0 10px; }
