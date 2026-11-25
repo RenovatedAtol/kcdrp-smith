@@ -16,7 +16,7 @@ const MAX_LEVEL = 8;
 const MIN_LEVEL = 2;
 const STORE = "kcdrp-smith-v1";
 const DEFAULTS = {
-  buySource: "avg", cap: 450, packFee: 25, filler: "coal", ov: {}, excl: [], level: "all", search: "",
+  buySource: "avg", cap: 450, packFee: 10, filler: "coal", ov: {}, excl: [], level: "all", search: "",
   onlyFit: false, hideNA: true, hideParts: false, sort: { key: "eff", dir: -1 }, cart: [], tab: "items", origin: "Kuttenberg", stock: 2, hire: false,
 };
 
@@ -26,8 +26,12 @@ let S = load();
 let open = new Set();       // recipe ids with their breakdown open
 
 function load() {
-  try { return Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem(STORE) || "{}")); }
-  catch { return Object.assign({}, DEFAULTS); }
+  let s;
+  try { s = Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem(STORE) || "{}")); }
+  catch { s = Object.assign({}, DEFAULTS); }
+  // the packing fee was 25 by mistake: a 25 nobody typed in becomes the real 10
+  if (!s.packFeeSet && s.packFee === 25) s.packFee = DEFAULTS.packFee;
+  return s;
 }
 function save() { localStorage.setItem(STORE, JSON.stringify(S)); }
 
@@ -193,7 +197,7 @@ function evaluate(r, fill) {
   res.sellAt = res.cost;                 // the sale that pays it all back
   return res;
 }
-const packFee = () => (num(S.packFee) != null && S.packFee >= 0 ? S.packFee : 25);
+const packFee = () => (num(S.packFee) != null && S.packFee >= 0 ? S.packFee : DEFAULTS.packFee);
 // a crate sells for its worth + 25 gr a km (in a straight line, at an ordinary need, fresh), 150 gr at most
 const GAIN_PER_KM = 25, GAIN_MAX = 150;
 function sellAtHtml(cost, worth) {
@@ -703,7 +707,7 @@ function bind() {
   const set = (k, v) => { S[k] = v; save(); render(); };
   $("buySource").onchange = (e) => set("buySource", e.target.value);
   $("cap").onchange = (e) => set("cap", Math.max(1, +e.target.value || 450));
-  $("packFee").onchange = (e) => set("packFee", Math.max(0, +e.target.value || 0));
+  $("packFee").onchange = (e) => { S.packFeeSet = true; set("packFee", Math.max(0, +e.target.value || 0)); };
   $("filler").onchange = (e) => set("filler", e.target.value);
   $("search").oninput = (e) => set("search", e.target.value);
   $("onlyFit").onchange = (e) => set("onlyFit", e.target.checked);
