@@ -12,6 +12,7 @@ const PRICE_SOURCES = [
 const DEFAULT_PACK = {
   steel: 9.5, haft: 6, foundhorseshoe: 3, holynail: 4, brokenrod: 6, ghosthorseshoe: 38, leather: 6,
   linenstrip: 1, suturekit: 2.3, padding: 3.2, hempfibre: 4, flax: 4, hide: 5, noose: 6.5, feather: 7, linen: 10,
+  venison: 2.7,
 };
 // level 1 is left out: it levels up quickly and its pieces tell little. Levels where no piece fits the pack are
 // left out too (smithing 9-10: every piece is worth several crates and would mostly burn).
@@ -187,12 +188,15 @@ function recipeCost(r, depth = 0) {
   }
   return t / r.yield;
 }
-// how many times the bench fee counts in a trade pack, by the piece's level. Read off the game's packing window
-// (2026-11-25): levels 1-3 once (Old dagger 3, Pitchfork 5, Broad axe 84.5), level 4 twice (Rider's war hammer
-// 100.5, Flanged mace 145.5). Levels 5-8 not checked yet: assumed twice.
-const FEE_IN_PACK = (level) => (level >= 4 ? 2 : 1);
-const packFeeOf = (r) => r.fee * FEE_IN_PACK(r.level);
-const GUESS_TAG = '<span class="tag na" title="Двойная плата станка в грузе проверена в игре только у кузнечных предметов 4-го уровня. Проверьте: положите предмет в ящик и впишите число из «Будет взято» в его расчёт.">не проверено</span>';
+// how many times the bench fee counts in a trade pack. The wiki says once; the game's packing window (2026-11-25)
+// agrees for smithing levels 1-3 (Old dagger 3, Pitchfork 5, Broad axe 84.5) and cooking levels 5 and 7 (Cooked roe
+// deer loin 4.7, Cooked deer ribs 6.7), but counts it twice for smithing level 4 (Rider's war hammer 100.5, Flanged
+// mace 145.5). Everything else: once, and pieces of level 4+ that were not checked carry an "unchecked" mark.
+const FEE_CHECKED = { smithing: { 1: 1, 2: 1, 3: 1, 4: 2 }, cooking: { 5: 1, 7: 1 } };
+const FEE_IN_PACK = (r) => ((FEE_CHECKED[r.craft] || {})[r.level] || 1);
+const feeChecked = (r) => (FEE_CHECKED[r.craft] || {})[r.level] != null;
+const packFeeOf = (r) => r.fee * FEE_IN_PACK(r);
+const GUESS_TAG = '<span class="tag na" title="Сколько этот предмет засчитывается в груз, в игре не проверено: у кузнеца 4-го уровня сервер засчитывает плату станка дважды, у других уровней и ремёсел — один раз. Проверьте: положите предмет в груз и впишите число из «Будет взято» в его расчёт.">не проверено</span>';
 function recipePack(r, depth = 0) {
   if (depth === 0 && num(S.itemPack && S.itemPack[r.id]) != null) return S.itemPack[r.id];   // the value read in the game
   let t = packFeeOf(r);
@@ -243,7 +247,7 @@ function evaluate(r, fill, cap = capOf(r.craft)) {
   const M = recipeCost(r), P = recipePack(r);
   const res = { r, M, P, eff: M && P != null ? P / M : null, loss: M != null && P != null ? M - P : null };
   // levels 5+ count the bench fee twice by assumption only, unless the player typed the game's value
-  res.guess = r.fee > 0 && FEE_IN_PACK(r.level) > 1 && (r.level >= 5 || r.craft !== "smithing") && num(S.itemPack && S.itemPack[r.id]) == null;
+  res.guess = r.fee > 0 && r.level >= 4 && !feeChecked(r) && num(S.itemPack && S.itemPack[r.id]) == null;
   res.fillKey = fill ? fill.key : null;
   res.selfPicked = [...usedBy(r)].some((k) => ov(k).mode === "self" && num(ov(k).pack) == null);
   if (res.selfPicked) res.guess = true;
@@ -430,9 +434,9 @@ function breakdown(r) {
     h += `<tr><td>${matName(k)}</td><td class="n">${q}</td><td class="src-tag">${c.src ? SRC[c.src] : "нет цены"}</td>
       <td class="n">${fmt(c.v, 2)}</td><td class="n">${fmt(c.v != null ? c.v * q : null)}</td><td class="n">${fmt(p, 2)}</td><td class="n">${fmt(p != null ? p * q : null)}</td></tr>`;
   }
-  const fm = FEE_IN_PACK(r.level);
+  const fm = FEE_IN_PACK(r);
   h += `<tr><td>Плата станка</td><td></td><td></td><td></td><td class="n">${fmt(r.fee)}</td><td class="n src-tag">${fm > 1 ? "×" + fm : ""}</td><td class="n">${fmt(packFeeOf(r))}</td></tr>`;
-  if (fm > 1) h += `<tr><td colspan="7" class="src-tag">С 4-го уровня сервер засчитывает плату станка в груз дважды (проверено на 4-м уровне; для 5–8 — предположение).</td></tr>`;
+  if (fm > 1) h += `<tr><td colspan="7" class="src-tag">У кузнечных предметов 4-го уровня сервер засчитывает плату станка в груз дважды (проверено в игре).</td></tr>`;
   if (r.yield > 1) h += `<tr><td colspan="7" class="src-tag">Выход ${r.yield} шт. — итог делится на ${r.yield}.</td></tr>`;
   const own = S.itemPack && S.itemPack[r.id];
   h += `<tr><td colspan="7" class="item-pack">В груз по игре за 1 шт.: <input type="number" step="0.5" min="0" data-ipack="${esc(r.id)}" value="${own != null ? own : ""}" placeholder="как в «Будет взято»"> <span class="src-tag">${own != null ? "сайт считает этот предмет по вашему числу — очистите поле, чтобы вернуть расчёт" : "впишите, если в игре другое число"}</span></td></tr>`;
