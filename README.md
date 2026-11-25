@@ -20,7 +20,7 @@
 ## Откуда данные
 
 - Рецепты — [вики сервера](https://wiki.kcdroleplay.com/recipes/), собираются скриптом `tools/build_data.py` в `data/smithing.json`.
-- Цены — публичный [API сервера](https://account.kcdroleplay.com/api/ucp/realm?world=ru). Сервер не даёт браузеру читать его с других сайтов (CORS), поэтому GitHub Action `.github/workflows/prices.yml` каждые 30 минут копирует цены в ветку `prices` (`prices.json`), а страница читает её. Запасной источник — копия аукциона из [калькулятора DanekKuznec](https://danekkuznec.github.io/kcd2-rp-crafting/).
+- Цены — публичный [API сервера](https://account.kcdroleplay.com/api/ucp/realm?world=ru). Сервер не даёт браузеру читать его с других сайтов (CORS), поэтому GitHub Action `.github/workflows/prices.yml` каждые 30 минут копирует цены в ветку `prices` (`prices.json`), а страница читает её. Если наша копия старше 1,5 часа (расписание GitHub бывает ненадёжным), цены аукциона берутся из ежечасной копии [калькулятора DanekKuznec](https://danekkuznec.github.io/kcd2-rp-crafting/), если она свежее; склады городов и рыночные цены — из нашей.
 - Цена товара в грузе — поле `instant` аукциона (совпадает с окном упаковки в игре); где его нет — значения из окна упаковки или рыночная цена сервера.
 - Русские названия и иконки предметов — из данных калькулятора DanekKuznec (`data.js`, `ricon.js`); иконки — игровая графика Kingdom Come: Deliverance II (© Warhorse Studios), лежат в `data/icons/`.
 

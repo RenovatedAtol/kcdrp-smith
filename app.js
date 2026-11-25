@@ -45,26 +45,40 @@ function fmt(v, d = 1) {
 }
 
 // ---------------------------------------------------------------- prices
-async function fetchPrices(bust) {
-  const errors = [];
-  for (const src of PRICE_SOURCES) {
-    try {
-      const r = await fetch(src.url + (bust ? `?t=${Date.now()}` : ""), { cache: "no-store" });
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      const d = await r.json();
-      if (src.kind === "own") {
-        SERVER = { market: d.market || {}, auction: d.auction || {}, towns: d.towns || [], updated: d.updated, label: src.label };
-      } else {
-        const auction = {};
-        for (const a of (d.auction && d.auction.items) || []) {
-          if (String(a.item).startsWith("good:")) auction[a.item.slice(5)] = a;
-        }
-        SERVER = { market: {}, auction, towns: [], updated: d.updated, label: src.label };
-      }
-      return true;
-    } catch (e) { errors.push(`${src.label}: ${e.message}`); }
+function auctionFromMirror(d) {
+  const auction = {};
+  for (const a of (d.auction && d.auction.items) || []) {
+    if (String(a.item).startsWith("good:")) auction[a.item.slice(5)] = a;
   }
-  throw new Error(errors.join("; "));
+  return auction;
+}
+async function getJson(url, bust) {
+  const r = await fetch(url + (bust ? `?t=${Date.now()}` : ""), { cache: "no-store" });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.json();
+}
+// our own copy first; when it is older than this, the auction comes from DanekKuznec's hourly copy if that is newer
+const STALE_MS = 90 * 60 * 1000;
+async function fetchPrices(bust) {
+  const [own, mirror] = PRICE_SOURCES;
+  let ownData = null, err = [];
+  try { ownData = await getJson(own.url, bust); } catch (e) { err.push(`${own.label}: ${e.message}`); }
+  const ownAge = ownData && ownData.updated ? Date.now() - new Date(ownData.updated) : Infinity;
+  let mirrorData = null;
+  if (ownAge > STALE_MS) {
+    try { mirrorData = await getJson(mirror.url, bust); } catch (e) { err.push(`${mirror.label}: ${e.message}`); }
+  }
+  if (!ownData && !mirrorData) throw new Error(err.join("; "));
+  SERVER = ownData
+    ? { market: ownData.market || {}, auction: ownData.auction || {}, towns: ownData.towns || [], updated: ownData.updated, townsUpdated: ownData.updated, label: own.label }
+    : { market: {}, auction: {}, towns: [], updated: null, townsUpdated: null, label: "" };
+  if (mirrorData && (!ownData || new Date(mirrorData.updated) > new Date(ownData.updated))) {
+    const fresh = auctionFromMirror(mirrorData);
+    for (const [id, a] of Object.entries(fresh)) SERVER.auction[id] = Object.assign({}, SERVER.auction[id], a);
+    SERVER.updated = mirrorData.updated;
+    SERVER.label = ownData ? "аукцион — копия DanekKuznec, склады и рыночные цены — " + own.label : mirror.label;
+  }
+  return true;
 }
 
 function showStatus(err) {
@@ -660,7 +674,7 @@ function renderRoute(fill) {
   }
   $("route").innerHTML = h;
   $("routeInfo").innerHTML =
-    `Склады — данные сервера на ${SERVER.updated ? new Date(SERVER.updated).toLocaleString("ru-RU", { hour: "2-digit", minute: "2-digit", day: "numeric", month: "short" }) : "—"}, расстояния — по прямой между центрами городов. ` +
+    `Склады — данные сервера на ${SERVER.townsUpdated ? new Date(SERVER.townsUpdated).toLocaleString("ru-RU", { hour: "2-digit", minute: "2-digit", day: "numeric", month: "short" }) : "—"}, расстояния — по прямой между центрами городов. ` +
     `«Итог» — сколько вы заработаете после продажи: стоимость ящиков + прибыль с дороги − все затраты (материалы, станки, добивка, упаковка ${fmt(packFee(), 0)} гр.). ` +
     (hasCart ? "" : "Добавьте предметы в корзину, чтобы увидеть итог по ним. ") +
     `Не учтено: маршрут дня (×1,1), свежесть груза, дневной лимит прибыли, точное место вашей кузницы. Множитель нужды — оценка по вики.`;
