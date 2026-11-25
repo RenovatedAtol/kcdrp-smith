@@ -570,11 +570,39 @@ function routeGain(km, lv) {
   return Math.min(GAIN_MAX, GAIN_PER_KM * km * needOf(lv));
 }
 
+// one route: from the packing town to a selling town
+function routeEval(from, to, k, cut, plan, crates) {
+  const km = Math.hypot(to.x - from.x, to.y - from.y) / 1000;
+  const lv = to.lv ? to.lv[k] : null;
+  const noStore = !to.lv || to.lv.every((v) => !v);       // a camp without a warehouse
+  const ok = to.name !== from.name && km >= MIN_KM && !to.paused && !noStore;
+  const gain = ok ? routeGain(km, lv) * cut : null;
+  let profit = null;
+  if (ok && plan && crates.length) {
+    // a crate worth under 300 gr earns its gain in proportion
+    profit = crates.reduce((s, c) => s + c.value + gain * Math.min(1, c.value / 300), 0) - plan.cost;
+  }
+  const why = to.name === from.name ? "город упаковки" : noStore ? "склад не ведётся" : to.paused ? "не покупает" : km < MIN_KM ? `ближе ${MIN_KM} км` : "";
+  return { from, t: to, km, lv, noStore, ok, gain, profit, why };
+}
+
+function routeCard(title, list, coalCost, hasCart) {
+  if (!list.length) return `<div class="rb-card"><h4>${title}</h4><p class="src-tag">Нет маршрутов, где можно продать.</p></div>`;
+  const li = list.map((x, i) => {
+    const coal = coalCost != null ? S.cap + x.gain - coalCost : null;
+    return `<li><span class="rb-no">${i + 1}</span><div><b>${esc(townRu(x.from.name))} → ${esc(townRu(x.t.name))}</b>
+      <span class="en">${fmt(x.km, 1)} км · склад ${fmt(x.lv, 0)}% · нужда ×${fmt(needOf(x.lv), 2)}</span>
+      <span class="rb-nums">+${fmt(x.gain, 0)} гр. за ящик${coal != null ? ` · ящик угля <span class="${coal >= 0 ? "good" : "bad"}">${coal >= 0 ? "+" : ""}${fmt(coal, 0)}</span>` : ""}${hasCart ? ` · корзина <span class="${x.profit >= 0 ? "good" : "bad"}">${x.profit >= 0 ? "+" : ""}${fmt(x.profit, 0)}</span>` : ""}</span></div></li>`;
+  }).join("");
+  return `<div class="rb-card"><h4>${title}</h4><ol>${li}</ol></div>`;
+}
+
 function renderRoute(fill) {
   const towns = SERVER.towns || [];
   const sel = $("routeOrigin");
   if (!towns.length) {
     $("route").innerHTML = "";
+    $("routeBest").innerHTML = "";
     $("routeInfo").textContent = "Данных о городах в загруженных ценах нет — нажмите «Обновить цены» чуть позже.";
     return;
   }
@@ -591,26 +619,25 @@ function renderRoute(fill) {
   const k = +S.stock, cut = S.hire ? 0.85 : 1;
   const plan = S.cart.length ? cartPlan(fill) : null;
   const crates = plan ? plan.crates.filter((c) => c.value > 0) : [];
-  const rows = towns.map((t) => {
-    const km = Math.hypot(t.x - o.x, t.y - o.y) / 1000;
-    const lv = t.lv ? t.lv[k] : null;
-    const noStore = !t.lv || t.lv.every((v) => !v);       // a camp without a warehouse
-    const ok = t.name !== o.name && km >= MIN_KM && !t.paused && !noStore;
-    const gain = ok ? routeGain(km, lv) * cut : null;
-    let profit = null;
-    if (ok && plan && crates.length) {
-      // a crate worth under 300 gr earns its gain in proportion
-      profit = crates.reduce((s, c) => s + c.value + gain * Math.min(1, c.value / 300), 0) - plan.cost;
-    }
-    return { t, km, lv, noStore, ok, gain, profit,
-      why: t.name === o.name ? "город упаковки" : noStore ? "склад не ведётся" : t.paused ? "не покупает" : km < MIN_KM ? `ближе ${MIN_KM} км` : "" };
-  });
-  rows.sort((a, b) => (b.ok - a.ok) || ((plan && crates.length ? (b.profit ?? -1e9) - (a.profit ?? -1e9) : (b.gain ?? -1) - (a.gain ?? -1))) || a.km - b.km);
+  const hasCart = !!(plan && crates.length);
+  const better = (a, b) => (b.ok - a.ok) || (hasCart ? (b.profit ?? -1e9) - (a.profit ?? -1e9) : (b.gain ?? -1) - (a.gain ?? -1)) || a.km - b.km;
+  const rows = towns.map((t) => routeEval(o, t, k, cut, plan, crates));
+  rows.sort(better);
 
   const coalCost = fill ? Math.ceil(S.cap / fill.pack - 1e-9) * fill.cost + packFee() : null;
+  // the three best routes from the chosen town, and from any town that keeps a warehouse
+  const fromHere = rows.filter((x) => x.ok).slice(0, 3);
+  const all = [];
+  for (const a of towns) {
+    if (!a.lv || a.lv.every((v) => !v)) continue;
+    for (const b of towns) { const x = routeEval(a, b, k, cut, plan, crates); if (x.ok) all.push(x); }
+  }
+  all.sort(better);
+  $("routeBest").innerHTML = routeCard(`Лучшие 3 из города «${esc(townRu(o.name))}»`, fromHere, coalCost, hasCart) +
+    routeCard("Лучшие 3 из любого города", all.slice(0, 3), coalCost, hasCart);
   let h = `<tr><th>Город</th><th class="n">Расстояние</th><th class="n">Склад «${esc(STOCKS[k])}»</th><th class="n">Нужда ≈</th><th class="n">Прибыль с дороги за ящик</th><th class="n">Заплатят за полный ящик</th>`;
   if (coalCost != null) h += `<th class="n">Ящик угля: итог</th>`;
-  if (plan && crates.length) h += `<th class="n">Ваша корзина (${crates.length} ящ.): итог</th>`;
+  if (hasCart) h += `<th class="n">Ваша корзина (${crates.length} ящ.): итог</th>`;
   h += `</tr>`;
   for (const x of rows) {
     const need = x.lv != null && !x.noStore ? needOf(x.lv) : null;
@@ -624,14 +651,14 @@ function renderRoute(fill) {
       const v = x.ok ? S.cap + x.gain - coalCost : null;
       h += `<td class="n ${v == null ? "" : v >= 0 ? "good" : "bad"}">${v == null ? "—" : (v >= 0 ? "+" : "") + fmt(v, 0)}</td>`;
     }
-    if (plan && crates.length) h += `<td class="n ${x.profit == null ? "" : x.profit >= 0 ? "good" : "bad"}">${x.profit == null ? "—" : (x.profit >= 0 ? "+" : "") + fmt(x.profit, 0) + " гр."}</td>`;
+    if (hasCart) h += `<td class="n ${x.profit == null ? "" : x.profit >= 0 ? "good" : "bad"}">${x.profit == null ? "—" : (x.profit >= 0 ? "+" : "") + fmt(x.profit, 0) + " гр."}</td>`;
     h += `</tr>`;
   }
   $("route").innerHTML = h;
   $("routeInfo").innerHTML =
     `Склады — данные сервера на ${SERVER.updated ? new Date(SERVER.updated).toLocaleString("ru-RU", { hour: "2-digit", minute: "2-digit", day: "numeric", month: "short" }) : "—"}, расстояния — по прямой между центрами городов. ` +
     `«Итог» — сколько вы заработаете после продажи: стоимость ящиков + прибыль с дороги − все затраты (материалы, станки, добивка, упаковка ${fmt(packFee(), 0)} гр.). ` +
-    (plan && crates.length ? "" : "Добавьте предметы в корзину, чтобы увидеть итог по ним. ") +
+    (hasCart ? "" : "Добавьте предметы в корзину, чтобы увидеть итог по ним. ") +
     `Не учтено: маршрут дня (×1,1), свежесть груза, дневной лимит прибыли, точное место вашей кузницы. Множитель нужды — оценка по вики.`;
 }
 
