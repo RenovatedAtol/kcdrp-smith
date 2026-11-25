@@ -15,6 +15,9 @@ const DEFAULT_PACK = {
   linenstrip: 1, suturekit: 2.3, padding: 3.8, hempfibre: 4, flax: 4, hide: 5, noose: 6.5, feather: 7, linen: 10,
   venison: 2.7, hare: 1.9, malt: 1.9, roach: 2, sage: 2, carp: 3, boarmeat: 3.9, eel: 4, pike: 4,
 };
+// crafts whose packing window ("Что принести") the user has sent: their goods have pack prices from the game
+const PACK_FROM_GAME = new Set(["smithing", "armouring", "tailoring", "cooking"]);
+const NO_PACK_TXT = "Нет цен на груз из игры: окно упаковки этого ремесла ещё не сверено, сколько товары засчитываются в груз — оценка по аукциону и может заметно отличаться.";
 // the smith's raw goods whose auction "instant" was checked against the packing window
 const INSTANT_CHECKED = new Set(["coal", "ore", "copperore", "logs"]);
 // where a good's pack price comes from: "game" (read off the packing window), "est" (an estimate from the API)
@@ -98,7 +101,22 @@ async function fetchPrices(bust) {
   return true;
 }
 
+// prices older than this get a red "refresh" warning at the top of the page
+const OLD_MS = 60 * 60 * 1000;
+function showStale(err) {
+  const el = $("stale");
+  const age = SERVER.updated ? Date.now() - new Date(SERVER.updated) : Infinity;
+  if (!err && age <= OLD_MS) { el.hidden = true; return; }
+  el.hidden = false;
+  el.innerHTML = !SERVER.updated
+    ? "Цены сервера не загружены — нажмите «Обновить цены»."
+    : `Цены не обновлялись больше часа (последние от ${new Date(SERVER.updated).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}) — обновите цены.` +
+      ` <button type="button" class="stale-btn">Обновить цены</button>`;
+  const b = el.querySelector("button");
+  if (b) b.onclick = () => refresh(true);
+}
 function showStatus(err) {
+  showStale(err);
   const el = $("status");
   if (err) { el.className = "err"; el.textContent = "Не удалось загрузить цены (" + err + "). Считаю по вашим ценам."; return; }
   el.className = "";
@@ -421,6 +439,7 @@ function renderHead(C, cap, fill, levels) {
   $("craftSub").textContent = `Себестоимость каждого предмета ремесла «${C.ru}» ${lvTxt} уровней, сколько он засчитывается в груз «${C.pack.ru}» и сколько вы теряете, если добивать груз самым выгодным товаром. Сервер: KCD Roleplay [RU].`;
   const src = { wiki: "по вики сервера", game: "по окну упаковки в игре", guess: "<b>не проверено</b>: в вики этого груза нет, состав и стоимость — предположение" }[C.pack.source] || "";
   $("packInfo").innerHTML = `<b>${esc(C.pack.ru)}</b>: ${fmt(C.pack.worth, 0)} гр. · пополняет склад «${STOCK_RU[C.pack.stock]}» · свежесть: ${esc(C.pack.fresh)} · ${src}.` +
+    (PACK_FROM_GAME.has(C.id) ? "" : `<span class="no-pack">${NO_PACK_TXT}</span>`) +
     `<span class="en">Принимает: ${esc(C.pack.goods.filter((k) => MAT()[k]).map((k) => MAT()[k].ru.toLowerCase()).join(", "))} и предметы этого ремесла.</span>`;
   // the level chips: only levels that have a piece that fits
   if (S.level !== "all" && !levels.includes(+S.level)) S.level = "all";
@@ -469,6 +488,8 @@ function modeSelect(key) {
 function exclBox(key) { return `<input type="checkbox" data-k="${esc(key)}" data-f="excl"${S.excl.includes(key) ? " checked" : ""}>`; }
 
 function renderPrices() {
+  $("pricesNoPack").textContent = NO_PACK_TXT;
+  $("pricesNoPack").hidden = PACK_FROM_GAME.has(S.craft);
   const keys = Object.keys(MAT()).filter((k) => !DATA.used || DATA.used.has(k)).sort((a, b) => MAT()[a].ru.localeCompare(MAT()[b].ru, "ru"));
   const goods = keys.filter((k) => MAT()[k].kind === "good");
   const parts = keys.filter((k) => MAT()[k].kind === "part");
