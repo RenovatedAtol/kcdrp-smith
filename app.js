@@ -209,9 +209,19 @@ function crateText(x) {
   const un = x.unfilled > 0.5 ? ` <span class="tag na">не добит на ${fmt(x.unfilled, 0)}</span>` : "";
   return `${x.k} шт.${f}${un}`;
 }
-function nameCell(r) {
+// item pictures: game icons (data/icons), or the name's first letters where there is none
+function iconHtml(src, label, cls = "ico") {
+  if (src) return `<img class="${cls}" src="${esc(src)}" alt="" loading="lazy">`;
+  const ini = String(label || "?").split(/[\s«»()-]+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+  return `<span class="${cls} none" aria-hidden="true">${esc(ini)}</span>`;
+}
+function matName(key, extra = "") {
+  const m = MAT()[key] || { ru: key };
+  return `<span class="mn">${iconHtml(m.icon, m.ru, "ico sm")}<span>${esc(m.ru)}${extra}</span></span>`;
+}
+function nameCell(r, extra = "") {
   const part = DATA.partNames.has(r.en) ? '<span class="tag part">материал</span>' : "";
-  return `${esc(r.ru || r.en)}${part}<span class="en">${esc(r.en)}${r.yield > 1 ? ` · ×${r.yield}` : ""}</span>`;
+  return `<div class="nm">${iconHtml(r.icon, r.ru || r.en)}<div>${esc(r.ru || r.en)}${part}${extra}<span class="en">${esc(r.en)}${r.yield > 1 ? ` · ×${r.yield}` : ""}</span></div></div>`;
 }
 
 const COLS = [
@@ -268,7 +278,7 @@ function render() {
   for (const x of rows) {
     const na = x.na ? ' <span class="tag na">нет цены</span>' : "";
     h += `<tr class="r${x.na ? " na" : ""}" data-id="${esc(x.r.id)}">
-      <td>${addBtn(x)}</td><td class="n">${x.r.level}</td><td>${nameCell(x.r)}${na}</td><td class="mats">${esc(matsText(x.r))}</td>
+      <td>${addBtn(x)}</td><td class="n">${x.r.level}</td><td>${nameCell(x.r, na)}</td><td class="mats">${esc(matsText(x.r))}</td>
       <td class="n">${fmt(x.r.fee / x.r.yield)}</td><td class="n">${fmt(x.M)}</td><td class="n">${fmt(x.P)}</td>
       <td class="n ${effClass(x.eff)}">${x.eff != null ? fmt(x.eff * 100) + "%" : "—"}</td><td class="n">${fmt(x.loss)}</td>
       <td>${crateText(x)}</td><td class="n">${fmt(x.crate)}</td></tr>`;
@@ -288,7 +298,7 @@ function breakdown(r) {
   let h = `<table class="sub-table"><tr><th>Материал</th><th class="n">Кол-во</th><th>Откуда</th><th class="n">Цена за шт.</th><th class="n">Себестоимость</th><th class="n">В груз за шт.</th><th class="n">В груз</th></tr>`;
   for (const [k, q] of Object.entries(r.items)) {
     const c = costOf(k), p = packOf(k);
-    h += `<tr><td>${esc(MAT()[k].ru)}</td><td class="n">${q}</td><td class="src-tag">${c.src ? SRC[c.src] : "нет цены"}</td>
+    h += `<tr><td>${matName(k)}</td><td class="n">${q}</td><td class="src-tag">${c.src ? SRC[c.src] : "нет цены"}</td>
       <td class="n">${fmt(c.v, 2)}</td><td class="n">${fmt(c.v != null ? c.v * q : null)}</td><td class="n">${fmt(p, 2)}</td><td class="n">${fmt(p != null ? p * q : null)}</td></tr>`;
   }
   h += `<tr><td>Плата станка</td><td></td><td></td><td></td><td class="n">${fmt(r.fee)}</td><td></td><td class="n">${fmt(r.fee)}</td></tr>`;
@@ -319,7 +329,7 @@ function renderPrices() {
   let g = `<tr><th>Товар</th><th class="n">Аукцион ср.</th><th class="n">Аукцион мин.</th><th class="n">Продано</th><th class="n">Покупка</th><th class="n">В груз</th><th class="n">Казна</th><th>Способ</th><th class="n">Итого за шт.</th><th>искл.</th></tr>`;
   for (const k of goods) {
     const m = MAT()[k], a = SERVER.auction[m.id] || {}, c = costOf(k);
-    g += `<tr><td>${esc(m.ru)}</td><td class="n">${fmt(a.avg, 2)}</td><td class="n">${fmt(a.low, 2)}</td><td class="n">${a.sold != null ? fmt(a.sold, 0) : "—"}</td>
+    g += `<tr><td>${matName(k)}</td><td class="n">${fmt(a.avg, 2)}</td><td class="n">${fmt(a.low, 2)}</td><td class="n">${a.sold != null ? fmt(a.sold, 0) : "—"}</td>
       <td class="n">${priceInput(k, "buy", serverAuction(m.id))}</td><td class="n">${priceInput(k, "pack", serverPack(m.id))}</td>
       <td class="n">${priceInput(k, "realm", serverRealm(m.id))}</td><td>${modeSelect(k)}</td>
       <td class="n">${fmt(c.v, 2)} <span class="src-tag">${c.src ? SRC[c.src] : ""}</span></td><td>${exclBox(k)}</td></tr>`;
@@ -329,7 +339,7 @@ function renderPrices() {
   for (const k of parts) {
     const r = recipeOf(k), c = costOf(k);
     const craft = r ? recipeCost(r) : null;
-    p += `<tr><td>${esc(MAT()[k].ru)}</td><td class="mats">${r ? esc(matsText(r)) + (r.yield > 1 ? ` → ${r.yield} шт.` : "") : "—"}</td>
+    p += `<tr><td>${matName(k)}</td><td class="mats">${r ? esc(matsText(r)) + (r.yield > 1 ? ` → ${r.yield} шт.` : "") : "—"}</td>
       <td class="n">${fmt(craft, 2)}</td><td class="n">${priceInput(k, "buy", null)}</td><td class="n">${priceInput(k, "pack", r ? recipePack(r) : null)}</td>
       <td>${modeSelect(k)}</td><td class="n">${fmt(c.v, 2)} <span class="src-tag">${c.src ? SRC[c.src] : ""}</span></td><td>${exclBox(k)}</td></tr>`;
   }
@@ -337,7 +347,7 @@ function renderPrices() {
   let mh = `<tr><th>Материал</th><th class="n">Покупка</th><th class="n">В груз</th><th class="n">Итого за шт.</th><th>искл.</th></tr>`;
   for (const k of manual) {
     const c = costOf(k);
-    mh += `<tr><td>${esc(MAT()[k].ru)}</td><td class="n">${priceInput(k, "buy", null)}</td><td class="n">${priceInput(k, "pack", null)}</td>
+    mh += `<tr><td>${matName(k)}</td><td class="n">${priceInput(k, "buy", null)}</td><td class="n">${priceInput(k, "pack", null)}</td>
       <td class="n">${c.v != null ? fmt(c.v, 2) : '<span class="tag na">нет в наличии</span>'}</td><td>${exclBox(k)}</td></tr>`;
   }
   $("manual").innerHTML = mh;
@@ -433,7 +443,7 @@ function renderCart(fill) {
   h += `<h3>Что сделать</h3><table class="sub-table"><tr><th>Предмет</th><th class="n">Штук</th><th class="n">Ящиков</th><th class="n">В груз</th><th></th></tr>`;
   for (const { l, r, x, qty } of p.lines) {
     const nCr = x.na ? 0 : Math.ceil(qty / (x.fits ? x.k : 1));
-    h += `<tr><td>${esc(r.ru || r.en)}${x.na ? ' <span class="tag na">нет цены</span>' : ""}${x.fits === false ? ' <span class="tag burn">не влезает</span>' : ""}</td>
+    h += `<tr><td><span class="mn">${iconHtml(r.icon, r.ru || r.en, "ico sm")}<span>${esc(r.ru || r.en)}${x.na ? ' <span class="tag na">нет цены</span>' : ""}${x.fits === false ? ' <span class="tag burn">не влезает</span>' : ""}</span></span></td>
       <td class="n"><input type="number" min="0" step="1" data-cq="${esc(l.id)}" value="${qty}"></td><td class="n">${nCr}</td>
       <td class="n">${fmt(x.P != null ? x.P * qty : null)}</td>
       <td><button type="button" class="ghost" data-cplus="${esc(l.id)}" title="ещё ящик">+ ящик</button> <button type="button" class="ghost" data-cdel="${esc(l.id)}" title="убрать">×</button></td></tr>`;
@@ -444,7 +454,7 @@ function renderCart(fill) {
   if (inner.length) {
     h += `<h3>Сделать по пути</h3><table class="sub-table"><tr><th>Материал</th><th class="n">Раз</th><th class="n">Получится</th><th class="n">Нужно</th></tr>`;
     for (const c of inner.slice().reverse()) {
-      h += `<tr><td>${esc(MAT()[c.key].ru)}</td><td class="n">${c.n}</td><td class="n">${c.made}</td><td class="n">${fmt(c.need, 2)}${c.made - c.need > 0.01 ? ` <span class="src-tag">(останется ${fmt(c.made - c.need, 2)})</span>` : ""}</td></tr>`;
+      h += `<tr><td>${matName(c.key)}</td><td class="n">${c.n}</td><td class="n">${c.made}</td><td class="n">${fmt(c.need, 2)}${c.made - c.need > 0.01 ? ` <span class="src-tag">(останется ${fmt(c.made - c.need, 2)})</span>` : ""}</td></tr>`;
     }
     h += `</table>`;
   }
@@ -453,11 +463,11 @@ function renderCart(fill) {
   h += `<h3>Взять с собой</h3><table class="sub-table"><tr><th>Материал</th><th class="n">Кол-во</th><th>Откуда</th><th class="n">Цена</th><th class="n">Сумма</th></tr>`;
   for (const b of p.buy) {
     const isFill = b.k === fk;
-    h += `<tr><td>${esc(MAT()[b.k].ru)}${isFill ? " <span class='src-tag'>(в рецепты)</span>" : ""}</td><td class="n">${fmt(b.q, 2)}</td>
+    h += `<tr><td>${matName(b.k, isFill ? " <span class='src-tag'>(в рецепты)</span>" : "")}</td><td class="n">${fmt(b.q, 2)}</td>
       <td class="src-tag">${b.c.src ? SRC[b.c.src] : '<span class="tag na">нет цены</span>'}</td><td class="n">${fmt(b.c.v, 2)}</td><td class="n">${fmt(b.c.v != null ? b.c.v * b.q : null)}</td></tr>`;
   }
   if (fill && p.fillTotal) {
-    h += `<tr><td>${esc(MAT()[fk].ru)} <span class="src-tag">(добивка ящиков)</span></td><td class="n">${p.fillTotal}</td><td class="src-tag">${SRC[costOf(fk).src] || ""}</td><td class="n">${fmt(fill.cost, 2)}</td><td class="n">${fmt(fill.cost * p.fillTotal)}</td></tr>`;
+    h += `<tr><td>${matName(fk, ' <span class="src-tag">(добивка ящиков)</span>')}</td><td class="n">${p.fillTotal}</td><td class="src-tag">${SRC[costOf(fk).src] || ""}</td><td class="n">${fmt(fill.cost, 2)}</td><td class="n">${fmt(fill.cost * p.fillTotal)}</td></tr>`;
     const inRec = (p.buy.find((b) => b.k === fk) || {}).q || 0;
     if (inRec) h += `<tr class="total"><td>${esc(MAT()[fk].ru)} всего</td><td class="n">${fmt(inRec + p.fillTotal, 2)}</td><td colspan="3"></td></tr>`;
   }
@@ -508,13 +518,14 @@ function renderPricesDialog() {
     const n = m ? m.ru : a && a.name ? a.name : id;
     return n.charAt(0).toUpperCase() + n.slice(1);
   };
+  const iconOf = (id) => (Object.values(MAT()).find((x) => x.kind === "good" && x.id === id) || {}).icon;
   let rows = [...ids].map((id) => ({ id, ru: ruOf(id), m: SERVER.market[id] || {}, a: SERVER.auction[id] || {} }))
     .filter((x) => (!smith || smithIds.has(x.id)) && (!q || x.ru.toLowerCase().includes(q) || x.id.includes(q)))
     .sort((x, y) => x.ru.localeCompare(y.ru, "ru"));
   let h = `<tr><th>Товар</th><th class="n">Корона продаёт</th><th class="n">Рыночная цена</th><th class="n">Аукцион ср.</th><th class="n">Аукцион мин.</th><th class="n">В груз</th><th class="n">Выставлено</th><th class="n">Продано</th></tr>`;
   for (const x of rows) {
     const pack = num(x.a.instant) > 0 ? x.a.instant : null;
-    h += `<tr><td>${esc(x.ru)}</td><td class="n">${fmt(num(x.m.buy) > 0 ? x.m.buy : null, 2)}</td><td class="n">${fmt(num(x.m.price) > 0 ? x.m.price : null, 2)}</td>
+    h += `<tr><td><span class="mn">${iconHtml(iconOf(x.id), x.ru, "ico sm")}<span>${esc(x.ru)}</span></span></td><td class="n">${fmt(num(x.m.buy) > 0 ? x.m.buy : null, 2)}</td><td class="n">${fmt(num(x.m.price) > 0 ? x.m.price : null, 2)}</td>
       <td class="n">${fmt(num(x.a.avg) > 0 ? x.a.avg : null, 2)}</td><td class="n">${fmt(num(x.a.low) > 0 ? x.a.low : null, 2)}</td><td class="n">${fmt(pack, 2)}</td>
       <td class="n">${x.a.qty != null ? fmt(x.a.qty, 0) : "—"}</td><td class="n">${x.a.sold != null ? fmt(x.a.sold, 0) : "—"}</td></tr>`;
   }

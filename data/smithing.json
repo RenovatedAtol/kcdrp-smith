@@ -5,19 +5,22 @@
    "kind": "part",
    "id": "Scrap metal",
    "ru": "Железный лом",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/36e16354c829.jpg"
   },
   "Iron": {
    "kind": "part",
    "id": "Iron",
    "ru": "Железо",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/680bc440ff4b.jpg"
   },
   "coal": {
    "kind": "good",
    "id": "coal",
    "ru": "Уголь",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/b075b25b8228.webp"
   },
   "logs": {
    "kind": "good",
@@ -29,103 +32,120 @@
    "kind": "good",
    "id": "ore",
    "ru": "Железная руда",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/5cc021246150.webp"
   },
   "antlers": {
    "kind": "good",
    "id": "antler",
    "ru": "Рога",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/bd9ed323893d.webp"
   },
   "Fastening material": {
    "kind": "part",
    "id": "Fastening material",
    "ru": "Крепёж",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/f88db9ea89d6.jpg"
   },
   "steel": {
    "kind": "good",
    "id": "steel",
    "ru": "Сталь",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/5c48e66ad2cb.webp"
   },
   "Ordinary sword guard": {
    "kind": "part",
    "id": "Ordinary sword guard",
    "ru": "Обычная гарда",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/a4945c24412e.jpg"
   },
   "Pig skin": {
    "kind": "part",
    "id": "Pig skin",
    "ru": "Свиная кожа",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/51544ca6d205.jpg"
   },
   "Coin sword pommel": {
    "kind": "part",
    "id": "Coin sword pommel",
    "ru": "Плоское навершие меча",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/119567fc97df.jpg"
   },
   "copper ore": {
    "kind": "good",
    "id": "copperore",
    "ru": "Медная руда",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/783ad9dee553.webp"
   },
   "Straight sword guard": {
    "kind": "part",
    "id": "Straight sword guard",
    "ru": "Прямая гарда",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/c20f4cc520f6.jpg"
   },
   "Frankfurt steel": {
    "kind": "part",
    "id": "Frankfurt steel",
    "ru": "Франкфуртская сталь",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/0bb23ef36046.jpg"
   },
   "Copper": {
    "kind": "part",
    "id": "Copper",
    "ru": "Медь",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/934383538c16.jpg"
   },
   "silver ore": {
    "kind": "good",
    "id": "silver",
    "ru": "Серебряная руда",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/23b9559be0e0.webp"
   },
   "Toledo steel": {
    "kind": "part",
    "id": "Toledo steel",
    "ru": "Толедская сталь",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/e0fb7afa20e6.jpg"
   },
   "Antler shards": {
    "kind": "part",
    "id": "Antler shards",
    "ru": "Осколки рогов",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/0e4958032f53.jpg"
   },
   "hides": {
    "kind": "good",
    "id": "hide",
    "ru": "Шкуры",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/a9b9d719c148.webp"
   },
   "leather": {
    "kind": "good",
    "id": "leather",
    "ru": "Кожа",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/188fb9432967.jpg"
   },
   "hafts": {
    "kind": "good",
    "id": "haft",
    "ru": "Древки",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/d28f48f0d5ec.webp"
   },
   "Exotic wood": {
    "kind": "manual",
@@ -137,13 +157,15 @@
    "kind": "manual",
    "id": "colouredgold",
    "ru": "Цветное золото",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/f160fe7ff24c.jpg"
   },
   "Tincal": {
    "kind": "manual",
    "id": "tincal",
    "ru": "Бура",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/9686e66efef5.webp"
   },
   "Dogfish skin": {
    "kind": "manual",
@@ -155,73 +177,85 @@
    "kind": "part",
    "id": "Sheet steel",
    "ru": "Листовая сталь",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/9d79151ebf30.jpg"
   },
   "Cow skin": {
    "kind": "part",
    "id": "Cow skin",
    "ru": "Коровья шкура",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/386ea56f19f5.jpg"
   },
   "Eight-sided sword pommel": {
    "kind": "part",
    "id": "Eight-sided sword pommel",
    "ru": "Восьмигранное навершие меча",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/c98e88888245.jpg"
   },
   "Horned sword guard": {
    "kind": "part",
    "id": "Horned sword guard",
    "ru": "Рогатая гарда",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/d6aeb85997c7.jpg"
   },
   "Deer skin": {
    "kind": "part",
    "id": "Deer skin",
    "ru": "Оленья шкура",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/7ee3f1489667.jpg"
   },
   "fine silver": {
    "kind": "good",
    "id": "finesilver",
    "ru": "Чистое серебро",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/858c9963f1d0.webp"
   },
   "Decorated sword pommel": {
    "kind": "part",
    "id": "Decorated sword pommel",
    "ru": "Украшенное навершие меча",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/596bb46defc3.jpg"
   },
   "Pear sword pommel": {
    "kind": "part",
    "id": "Pear sword pommel",
    "ru": "Грушевидное навершие меча",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/8bfbf56f04d7.jpg"
   },
   "Reinforced sword guard": {
    "kind": "part",
    "id": "Reinforced sword guard",
    "ru": "Укреплённая гарда",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/3da0f6b7ee13.jpg"
   },
   "Enamel powder": {
    "kind": "manual",
    "id": "enamel",
    "ru": "Порошок эмали",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/9893951e79fe.jpg"
   },
   "Jasper": {
    "kind": "manual",
    "id": "jasper",
    "ru": "Яшма",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/34eda0cb86eb.webp"
   },
   "Acidum chloridum": {
    "kind": "manual",
    "id": "acidum",
    "ru": "Acidum chloridum",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/27c98da6260c.jpg"
   },
   "pine resin": {
    "kind": "good",
@@ -233,13 +267,15 @@
    "kind": "good",
    "id": "silvernugget",
    "ru": "Самородки чистого серебра",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/0e139699847b.webp"
   },
   "gold ore": {
    "kind": "good",
    "id": "gold",
    "ru": "Золотая руда",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/8f9854ecf70d.webp"
   },
   "Broken axe": {
    "kind": "good",
@@ -251,7 +287,8 @@
    "kind": "good",
    "id": "meteoric",
    "ru": "Метеоритное железо",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/732a73077363.webp"
   },
   "Dragon claw": {
    "kind": "good",
@@ -263,7 +300,8 @@
    "kind": "manual",
    "id": "rockpitch",
    "ru": "Каменная смола",
-   "recipe": false
+   "recipe": false,
+   "icon": "data/icons/a4901630d9b7.jpg"
   },
   "Weapon stub": {
    "kind": "good",
@@ -275,7 +313,8 @@
    "kind": "part",
    "id": "Henry's longsword",
    "ru": "Длинный меч Индржиха",
-   "recipe": true
+   "recipe": true,
+   "icon": "data/icons/f03f06b57769.jpg"
   }
  },
  "recipes": [
@@ -294,7 +333,8 @@
    },
    "fee": 3,
    "secs": 10,
-   "worth": 0
+   "worth": 0,
+   "icon": "data/icons/1a5c2ceb915a.jpg"
   },
   {
    "id": "Training bludgeon",
@@ -308,7 +348,8 @@
    },
    "fee": 1,
    "secs": 10,
-   "worth": 1
+   "worth": 1,
+   "icon": "data/icons/40bd945a35bb.jpg"
   },
   {
    "id": "Scrap metal",
@@ -323,7 +364,8 @@
    },
    "fee": 0,
    "secs": 6,
-   "worth": 6
+   "worth": 6,
+   "icon": "data/icons/36e16354c829.jpg"
   },
   {
    "id": "Fastening material",
@@ -338,7 +380,8 @@
    },
    "fee": 0,
    "secs": 6,
-   "worth": 10
+   "worth": 10,
+   "icon": "data/icons/f88db9ea89d6.jpg"
   },
   {
    "id": "Farmer Matthew's pitchfork",
@@ -352,7 +395,8 @@
    },
    "fee": 1,
    "secs": 10,
-   "worth": 3
+   "worth": 3,
+   "icon": "data/icons/6511848f082e.jpg"
   },
   {
    "id": "Training axe",
@@ -366,7 +410,8 @@
    },
    "fee": 1,
    "secs": 10,
-   "worth": 3
+   "worth": 3,
+   "icon": "data/icons/cd0152fde9d8.jpg"
   },
   {
    "id": "Training longsword (plain)",
@@ -380,7 +425,8 @@
    },
    "fee": 1,
    "secs": 10,
-   "worth": 3
+   "worth": 3,
+   "icon": "data/icons/3e6735406333.jpg"
   },
   {
    "id": "Staff",
@@ -394,7 +440,8 @@
    },
    "fee": 1,
    "secs": 10,
-   "worth": 3
+   "worth": 3,
+   "icon": "data/icons/10964ef0a0ec.jpg"
   },
   {
    "id": "Training sword",
@@ -408,7 +455,8 @@
    },
    "fee": 1,
    "secs": 10,
-   "worth": 3
+   "worth": 3,
+   "icon": "data/icons/9366ef23483a.jpg"
   },
   {
    "id": "Iron",
@@ -423,7 +471,8 @@
    },
    "fee": 1,
    "secs": 6,
-   "worth": 15
+   "worth": 15,
+   "icon": "data/icons/680bc440ff4b.jpg"
   },
   {
    "id": "Torch",
@@ -437,7 +486,8 @@
    },
    "fee": 1,
    "secs": 10,
-   "worth": 6
+   "worth": 6,
+   "icon": "data/icons/7c4ee62f7367.jpg"
   },
   {
    "id": "Club",
@@ -451,7 +501,8 @@
    },
    "fee": 1,
    "secs": 10,
-   "worth": 8
+   "worth": 8,
+   "icon": "data/icons/7bf2a4dc6430.jpg"
   },
   {
    "id": "Antler shards",
@@ -465,7 +516,8 @@
    },
    "fee": 0,
    "secs": 6,
-   "worth": 24
+   "worth": 24,
+   "icon": "data/icons/0e4958032f53.jpg"
   },
   {
    "id": "Old dagger",
@@ -479,7 +531,8 @@
    },
    "fee": 1,
    "secs": 10,
-   "worth": 20
+   "worth": 20,
+   "icon": "data/icons/64d404d6d720.jpg"
   },
   {
    "id": "Farmer's horseshoes",
@@ -493,7 +546,8 @@
    },
    "fee": 1,
    "secs": 10,
-   "worth": 20
+   "worth": 20,
+   "icon": "data/icons/25300d353515.jpg"
   },
   {
    "id": "Work axe",
@@ -507,7 +561,8 @@
    },
    "fee": 1,
    "secs": 10,
-   "worth": 25
+   "worth": 25,
+   "icon": "data/icons/e08fe94eacef.jpg"
   },
   {
    "id": "Painted pavese",
@@ -521,7 +576,8 @@
    },
    "fee": 1,
    "secs": 10,
-   "worth": 30
+   "worth": 30,
+   "icon": "data/icons/9d15ad2453b6.jpg"
   },
   {
    "id": "Knight's horseshoes",
@@ -535,7 +591,8 @@
    },
    "fee": 1,
    "secs": 10,
-   "worth": 40
+   "worth": 40,
+   "icon": "data/icons/fafce2933448.jpg"
   },
   {
    "id": "Training longsword (reinforced)",
@@ -564,7 +621,8 @@
    },
    "fee": 1,
    "secs": 10,
-   "worth": 50
+   "worth": 50,
+   "icon": "data/icons/82fcf6d373c3.jpg"
   },
   {
    "id": "Hunting sword",
@@ -580,7 +638,8 @@
    },
    "fee": 2,
    "secs": 10,
-   "worth": 82
+   "worth": 82,
+   "icon": "data/icons/c73a2e77916e.jpg"
   },
   {
    "id": "Hunting sword (recipe 2)",
@@ -596,7 +655,8 @@
    },
    "fee": 3,
    "secs": 10,
-   "worth": 82
+   "worth": 82,
+   "icon": "data/icons/950726ed22f4.jpg"
   },
   {
    "id": "Burgher's hunting sword",
@@ -611,7 +671,8 @@
    },
    "fee": 3,
    "secs": 10,
-   "worth": 214
+   "worth": 214,
+   "icon": "data/icons/3b60529796e9.jpg"
   },
   {
    "id": "Carpenter's axe",
@@ -628,7 +689,8 @@
    },
    "fee": 3,
    "secs": 10,
-   "worth": 216
+   "worth": 216,
+   "icon": "data/icons/135b2f4abfdb.jpg"
   },
   {
    "id": "Blacksmith's defender",
@@ -646,7 +708,8 @@
    },
    "fee": 1,
    "secs": 10,
-   "worth": 336
+   "worth": 336,
+   "icon": "data/icons/8dc4dacc90ca.jpg"
   },
   {
    "id": "Military sword",
@@ -664,7 +727,8 @@
    },
    "fee": 6,
    "secs": 10,
-   "worth": 367
+   "worth": 367,
+   "icon": "data/icons/8dc4dacc90ca.jpg"
   },
   {
    "id": "Tournament practice sword",
@@ -680,7 +744,8 @@
    },
    "fee": 16,
    "secs": 10,
-   "worth": 500
+   "worth": 500,
+   "icon": "data/icons/9c3b31cc20cd.jpg"
   },
   {
    "id": "Coin sword pommel",
@@ -694,7 +759,8 @@
    },
    "fee": 0,
    "secs": 7,
-   "worth": 8
+   "worth": 8,
+   "icon": "data/icons/119567fc97df.jpg"
   },
   {
    "id": "Ordinary sword guard",
@@ -709,7 +775,8 @@
    },
    "fee": 0,
    "secs": 7,
-   "worth": 6
+   "worth": 6,
+   "icon": "data/icons/a4945c24412e.jpg"
   },
   {
    "id": "Dagger",
@@ -724,7 +791,8 @@
    },
    "fee": 0,
    "secs": 8,
-   "worth": 23
+   "worth": 23,
+   "icon": "data/icons/9134110ed3b8.jpg"
   },
   {
    "id": "Brunswick's dagger",
@@ -738,7 +806,8 @@
    },
    "fee": 1,
    "secs": 12,
-   "worth": 23
+   "worth": 23,
+   "icon": "data/icons/2da4f5b4a206.jpg"
   },
   {
    "id": "Copper",
@@ -753,7 +822,8 @@
    },
    "fee": 0,
    "secs": 7,
-   "worth": 27
+   "worth": 27,
+   "icon": "data/icons/934383538c16.jpg"
   },
   {
    "id": "Spiked horseshoes",
@@ -768,7 +838,8 @@
    },
    "fee": 1,
    "secs": 12,
-   "worth": 45
+   "worth": 45,
+   "icon": "data/icons/ea9469536bb2.jpg"
   },
   {
    "id": "Nobleman's horseshoes",
@@ -782,7 +853,8 @@
    },
    "fee": 2,
    "secs": 12,
-   "worth": 50
+   "worth": 50,
+   "icon": "data/icons/78e632339f44.jpg"
   },
   {
    "id": "Pitchfork",
@@ -796,7 +868,8 @@
    },
    "fee": 1,
    "secs": 12,
-   "worth": 62
+   "worth": 62,
+   "icon": "data/icons/d565d31e9807.jpg"
   },
   {
    "id": "Lovarian horseshoes",
@@ -810,7 +883,8 @@
    },
    "fee": 2,
    "secs": 12,
-   "worth": 80
+   "worth": 80,
+   "icon": "data/icons/b7754884b9bc.jpg"
   },
   {
    "id": "Rondel dagger",
@@ -825,7 +899,8 @@
    },
    "fee": 3,
    "secs": 12,
-   "worth": 250
+   "worth": 250,
+   "icon": "data/icons/3cef4e059562.jpg"
   },
   {
    "id": "Spiked bludgeon",
@@ -840,7 +915,8 @@
    },
    "fee": 4,
    "secs": 12,
-   "worth": 291
+   "worth": 291,
+   "icon": "data/icons/a5c672f116ef.jpg"
   },
   {
    "id": "Knight's longsword",
@@ -858,7 +934,8 @@
    },
    "fee": 1,
    "secs": 12,
-   "worth": 331
+   "worth": 331,
+   "icon": "data/icons/cd0469750fd8.jpg"
   },
   {
    "id": "Cuman shashka",
@@ -875,7 +952,8 @@
    },
    "fee": 1,
    "secs": 12,
-   "worth": 336
+   "worth": 336,
+   "icon": "data/icons/40b303dda5cb.jpg"
   },
   {
    "id": "Competition sword",
@@ -893,7 +971,8 @@
    },
    "fee": 6,
    "secs": 12,
-   "worth": 336
+   "worth": 336,
+   "icon": "data/icons/a3c70578832d.jpg"
   },
   {
    "id": "Jimbo's marotte",
@@ -909,7 +988,8 @@
    },
    "fee": 4,
    "secs": 12,
-   "worth": 365
+   "worth": 365,
+   "icon": "data/icons/cf76369d38f4.jpg"
   },
   {
    "id": "Bearded axe",
@@ -926,7 +1006,8 @@
    },
    "fee": 8,
    "secs": 12,
-   "worth": 485
+   "worth": 485,
+   "icon": "data/icons/f08f09981501.jpg"
   },
   {
    "id": "Falchion",
@@ -942,7 +1023,8 @@
    },
    "fee": 5,
    "secs": 12,
-   "worth": 486
+   "worth": 486,
+   "icon": "data/icons/25b64c9e9e33.jpg"
   },
   {
    "id": "Light mace",
@@ -958,7 +1040,8 @@
    },
    "fee": 15,
    "secs": 12,
-   "worth": 574
+   "worth": 574,
+   "icon": "data/icons/4afd1b5821b4.jpg"
   },
   {
    "id": "Morgenstern",
@@ -974,7 +1057,8 @@
    },
    "fee": 26,
    "secs": 12,
-   "worth": 828
+   "worth": 828,
+   "icon": "data/icons/e20f1b9eb0e5.jpg"
   },
   {
    "id": "Straight sword guard",
@@ -989,7 +1073,8 @@
    },
    "fee": 0,
    "secs": 8,
-   "worth": 6
+   "worth": 6,
+   "icon": "data/icons/c20f4cc520f6.jpg"
   },
   {
    "id": "Heater shield",
@@ -1003,7 +1088,8 @@
    },
    "fee": 1,
    "secs": 14,
-   "worth": 62
+   "worth": 62,
+   "icon": "data/icons/2430261fdee6.jpg"
   },
   {
    "id": "Billhook",
@@ -1018,7 +1104,8 @@
    },
    "fee": 4,
    "secs": 14,
-   "worth": 279
+   "worth": 279,
+   "icon": "data/icons/6d1c14018295.jpg"
   },
   {
    "id": "Glaive",
@@ -1034,7 +1121,8 @@
    },
    "fee": 4,
    "secs": 14,
-   "worth": 354
+   "worth": 354,
+   "icon": "data/icons/6c8dd30fb9fb.jpg"
   },
   {
    "id": "Common war hammer",
@@ -1050,7 +1138,8 @@
    },
    "fee": 30,
    "secs": 14,
-   "worth": 447
+   "worth": 447,
+   "icon": "data/icons/acdaba5cc2a3.jpg"
   },
   {
    "id": "Brunswick's poleaxe",
@@ -1068,7 +1157,8 @@
    },
    "fee": 6,
    "secs": 14,
-   "worth": 478
+   "worth": 478,
+   "icon": "data/icons/1a66b1118c85.jpg"
   },
   {
    "id": "Common sabre",
@@ -1086,7 +1176,8 @@
    },
    "fee": 10,
    "secs": 14,
-   "worth": 773
+   "worth": 773,
+   "icon": "data/icons/12fe4faa9696.jpg"
   },
   {
    "id": "Zizka's mace",
@@ -1102,7 +1193,8 @@
    },
    "fee": 22,
    "secs": 14,
-   "worth": 868
+   "worth": 868,
+   "icon": "data/icons/53432a0ba992.jpg"
   },
   {
    "id": "Raborsch butcher's axe",
@@ -1118,7 +1210,8 @@
    },
    "fee": 22,
    "secs": 14,
-   "worth": 904
+   "worth": 904,
+   "icon": "data/icons/8cebbc8d1507.jpg"
   },
   {
    "id": "Dagger mace",
@@ -1134,7 +1227,8 @@
    },
    "fee": 26,
    "secs": 14,
-   "worth": 942
+   "worth": 942,
+   "icon": "data/icons/7ef21893c2ca.jpg"
   },
   {
    "id": "Broad axe",
@@ -1152,7 +1246,8 @@
    },
    "fee": 36,
    "secs": 14,
-   "worth": 1073
+   "worth": 1073,
+   "icon": "data/icons/da4ea3bc3954.jpg"
   },
   {
    "id": "Common mace",
@@ -1168,7 +1263,8 @@
    },
    "fee": 36,
    "secs": 14,
-   "worth": 1139
+   "worth": 1139,
+   "icon": "data/icons/cd9177dcd7dd.jpg"
   },
   {
    "id": "Bailiff's mace",
@@ -1184,7 +1280,8 @@
    },
    "fee": 36,
    "secs": 14,
-   "worth": 1140
+   "worth": 1140,
+   "icon": "data/icons/8bb22d3d85de.jpg"
   },
   {
    "id": "Godwin's longsword",
@@ -1218,7 +1315,8 @@
    },
    "fee": 107,
    "secs": 14,
-   "worth": 2218
+   "worth": 2218,
+   "icon": "data/icons/63ea761ea258.jpg"
   },
   {
    "id": "Pear sword pommel",
@@ -1233,7 +1331,8 @@
    },
    "fee": 0,
    "secs": 9,
-   "worth": 16
+   "worth": 16,
+   "icon": "data/icons/8bfbf56f04d7.jpg"
   },
   {
    "id": "Horned sword guard",
@@ -1248,7 +1347,8 @@
    },
    "fee": 0,
    "secs": 9,
-   "worth": 16
+   "worth": 16,
+   "icon": "data/icons/d6aeb85997c7.jpg"
   },
   {
    "id": "Eight-sided sword pommel",
@@ -1263,7 +1363,8 @@
    },
    "fee": 0,
    "secs": 9,
-   "worth": 20
+   "worth": 20,
+   "icon": "data/icons/c98e88888245.jpg"
   },
   {
    "id": "Frankfurt steel",
@@ -1279,7 +1380,8 @@
    },
    "fee": 0,
    "secs": 9,
-   "worth": 40
+   "worth": 40,
+   "icon": "data/icons/0bb23ef36046.jpg"
   },
   {
    "id": "Toledo steel",
@@ -1295,7 +1397,8 @@
    },
    "fee": 0,
    "secs": 9,
-   "worth": 70
+   "worth": 70,
+   "icon": "data/icons/e0fb7afa20e6.jpg"
   },
   {
    "id": "Racing horseshoes",
@@ -1311,7 +1414,8 @@
    },
    "fee": 4,
    "secs": 16,
-   "worth": 150
+   "worth": 150,
+   "icon": "data/icons/26fef0e9763c.jpg"
   },
   {
    "id": "Shell hunting sword",
@@ -1328,7 +1432,8 @@
    },
    "fee": 1,
    "secs": 16,
-   "worth": 583
+   "worth": 583,
+   "icon": "data/icons/95a6fd4dd7f2.jpg"
   },
   {
    "id": "Rider's war hammer",
@@ -1345,7 +1450,8 @@
    },
    "fee": 12,
    "secs": 16,
-   "worth": 918
+   "worth": 918,
+   "icon": "data/icons/07b504a52ff7.jpg"
   },
   {
    "id": "Opportunity",
@@ -1363,7 +1469,8 @@
    },
    "fee": 14,
    "secs": 16,
-   "worth": 963
+   "worth": 963,
+   "icon": "data/icons/e0bfa81a19f1.jpg"
   },
   {
    "id": "Buchar mace",
@@ -1381,7 +1488,8 @@
    },
    "fee": 12,
    "secs": 16,
-   "worth": 980
+   "worth": 980,
+   "icon": "data/icons/0ffa94582042.jpg"
   },
   {
    "id": "Cuman fokos",
@@ -1402,7 +1510,8 @@
    },
    "fee": 15,
    "secs": 16,
-   "worth": 1121
+   "worth": 1121,
+   "icon": "data/icons/4141979c4ec8.jpg"
   },
   {
    "id": "Common longsword",
@@ -1423,7 +1532,8 @@
    },
    "fee": 17,
    "secs": 16,
-   "worth": 1239
+   "worth": 1239,
+   "icon": "data/icons/817b048b6d5c.jpg"
   },
   {
    "id": "Boleslav Bavor's sword",
@@ -1441,7 +1551,8 @@
    },
    "fee": 18,
    "secs": 16,
-   "worth": 1253
+   "worth": 1253,
+   "icon": "data/icons/09bc47b467e0.jpg"
   },
   {
    "id": "Flanged mace",
@@ -1459,7 +1570,8 @@
    },
    "fee": 18,
    "secs": 16,
-   "worth": 1419
+   "worth": 1419,
+   "icon": "data/icons/38f7eef20652.jpg"
   },
   {
    "id": "Reinforced sword guard",
@@ -1474,7 +1586,8 @@
    },
    "fee": 0,
    "secs": 10,
-   "worth": 16
+   "worth": 16,
+   "icon": "data/icons/3da0f6b7ee13.jpg"
   },
   {
    "id": "Cuman shield",
@@ -1490,7 +1603,8 @@
    },
    "fee": 3,
    "secs": 18,
-   "worth": 121
+   "worth": 121,
+   "icon": "data/icons/f76b6227179b.jpg"
   },
   {
    "id": "Skalitz knight's shield",
@@ -1507,7 +1621,8 @@
    },
    "fee": 4,
    "secs": 18,
-   "worth": 136
+   "worth": 136,
+   "icon": "data/icons/2b7c0809b4b5.jpg"
   },
   {
    "id": "Bardiche",
@@ -1524,7 +1639,8 @@
    },
    "fee": 8,
    "secs": 18,
-   "worth": 649
+   "worth": 649,
+   "icon": "data/icons/da7982ad6461.jpg"
   },
   {
    "id": "Voulge",
@@ -1541,7 +1657,8 @@
    },
    "fee": 8,
    "secs": 18,
-   "worth": 649
+   "worth": 649,
+   "icon": "data/icons/675e2ecd6c87.jpg"
   },
   {
    "id": "Noble's hunting sword",
@@ -1560,7 +1677,8 @@
    },
    "fee": 0,
    "secs": 18,
-   "worth": 705
+   "worth": 705,
+   "icon": "data/icons/2fe9eb5ba07a.jpg"
   },
   {
    "id": "Heavy mace",
@@ -1579,7 +1697,8 @@
    },
    "fee": 19,
    "secs": 18,
-   "worth": 1325
+   "worth": 1325,
+   "icon": "data/icons/bcac8c4633a3.jpg"
   },
   {
    "id": "Knight's war hammer",
@@ -1598,7 +1717,8 @@
    },
    "fee": 20,
    "secs": 18,
-   "worth": 1428
+   "worth": 1428,
+   "icon": "data/icons/87be220006fb.jpg"
   },
   {
    "id": "War hammer",
@@ -1617,7 +1737,8 @@
    },
    "fee": 21,
    "secs": 18,
-   "worth": 1482
+   "worth": 1482,
+   "icon": "data/icons/f83a187f77eb.jpg"
   },
   {
    "id": "Calvaria axe",
@@ -1638,7 +1759,8 @@
    },
    "fee": 0,
    "secs": 18,
-   "worth": 1527
+   "worth": 1527,
+   "icon": "data/icons/8d668794ff38.jpg"
   },
   {
    "id": "Broadsword",
@@ -1663,7 +1785,8 @@
    },
    "fee": 38,
    "secs": 18,
-   "worth": 1567
+   "worth": 1567,
+   "icon": "data/icons/6e68e62e9485.jpg"
   },
   {
    "id": "Boleslav Bavor's reforged sword",
@@ -1684,7 +1807,8 @@
    },
    "fee": 34,
    "secs": 18,
-   "worth": 1793
+   "worth": 1793,
+   "icon": "data/icons/d07b651ade63.jpg"
   },
   {
    "id": "Lord Capon's longsword",
@@ -1703,7 +1827,8 @@
    },
    "fee": 50,
    "secs": 18,
-   "worth": 2047
+   "worth": 2047,
+   "icon": "data/icons/677cc47b9108.jpg"
   },
   {
    "id": "Henry's longsword",
@@ -1722,7 +1847,8 @@
    },
    "fee": 50,
    "secs": 18,
-   "worth": 2047
+   "worth": 2047,
+   "icon": "data/icons/f03f06b57769.jpg"
   },
   {
    "id": "Radzig Kobyla's longsword (Istvan)",
@@ -1741,7 +1867,8 @@
    },
    "fee": 50,
    "secs": 18,
-   "worth": 2047
+   "worth": 2047,
+   "icon": "data/icons/f03f06b57769.jpg"
   },
   {
    "id": "Battle longsword",
@@ -1765,7 +1892,8 @@
    },
    "fee": 56,
    "secs": 18,
-   "worth": 2400
+   "worth": 2400,
+   "icon": "data/icons/18bf448aac42.jpg"
   },
   {
    "id": "Knight shield",
@@ -1782,7 +1910,8 @@
    },
    "fee": 4,
    "secs": 20,
-   "worth": 126
+   "worth": 126,
+   "icon": "data/icons/9b27eef4a853.jpg"
   },
   {
    "id": "Practice shield",
@@ -1799,7 +1928,8 @@
    },
    "fee": 4,
    "secs": 20,
-   "worth": 126
+   "worth": 126,
+   "icon": "data/icons/7bf6e6dcbacb.jpg"
   },
   {
    "id": "Ghostly horseshoes",
@@ -1818,7 +1948,8 @@
    },
    "fee": 12,
    "secs": 20,
-   "worth": 300
+   "worth": 300,
+   "icon": "data/icons/26fef0e9763c.jpg"
   },
   {
    "id": "Emmeram's hunting sword",
@@ -1837,7 +1968,8 @@
    },
    "fee": 15,
    "secs": 20,
-   "worth": 1138
+   "worth": 1138,
+   "icon": "data/icons/4ab01d8fe76a.jpg"
   },
   {
    "id": "Executioner's axe",
@@ -1858,7 +1990,8 @@
    },
    "fee": 108,
    "secs": 20,
-   "worth": 1427
+   "worth": 1427,
+   "icon": "data/icons/7aa35523a10f.jpg"
   },
   {
    "id": "Captain's mace",
@@ -1877,7 +2010,8 @@
    },
    "fee": 26,
    "secs": 20,
-   "worth": 1726
+   "worth": 1726,
+   "icon": "data/icons/a7f7ef45e144.jpg"
   },
   {
    "id": "Basilard",
@@ -1901,7 +2035,8 @@
    },
    "fee": 38,
    "secs": 20,
-   "worth": 1866
+   "worth": 1866,
+   "icon": "data/icons/56564a03ed64.jpg"
   },
   {
    "id": "Replica of the longsword \"Absolver\"",
@@ -1925,7 +2060,8 @@
    },
    "fee": 50,
    "secs": 20,
-   "worth": 2451
+   "worth": 2451,
+   "icon": "data/icons/bbd60674bb99.jpg"
   },
   {
    "id": "Dry Devil's longsword",
@@ -1944,7 +2080,8 @@
    },
    "fee": 57,
    "secs": 20,
-   "worth": 2472
+   "worth": 2472,
+   "icon": "data/icons/741fcf1675d8.jpg"
   },
   {
    "id": "Raven's beak",
@@ -1963,7 +2100,8 @@
    },
    "fee": 54,
    "secs": 20,
-   "worth": 2622
+   "worth": 2622,
+   "icon": "data/icons/abe1b02add44.jpg"
   },
   {
    "id": "Decorated sword pommel",
@@ -1978,7 +2116,8 @@
    },
    "fee": 0,
    "secs": 12,
-   "worth": 76
+   "worth": 76,
+   "icon": "data/icons/596bb46defc3.jpg"
   },
   {
    "id": "Guisarme",
@@ -1996,7 +2135,8 @@
    },
    "fee": 13,
    "secs": 22,
-   "worth": 1013
+   "worth": 1013,
+   "icon": "data/icons/02c440efcff7.jpg"
   },
   {
    "id": "Noble's sword",
@@ -2020,7 +2160,8 @@
    },
    "fee": 125,
    "secs": 22,
-   "worth": 2078
+   "worth": 2078,
+   "icon": "data/icons/a5bfbb65ef93.jpg"
   },
   {
    "id": "Knight's axe",
@@ -2043,7 +2184,8 @@
    },
    "fee": 46,
    "secs": 22,
-   "worth": 2483
+   "worth": 2483,
+   "icon": "data/icons/00fa288170c3.jpg"
   },
   {
    "id": "Ataman's sabre",
@@ -2067,7 +2209,8 @@
    },
    "fee": 84,
    "secs": 22,
-   "worth": 2690
+   "worth": 2690,
+   "icon": "data/icons/1b0d8b8e841f.jpg"
   },
   {
    "id": "Lord von Bergow's sword",
@@ -2086,7 +2229,8 @@
    },
    "fee": 142,
    "secs": 22,
-   "worth": 2709
+   "worth": 2709,
+   "icon": "data/icons/e0bfa81a19f1.jpg"
   },
   {
    "id": "Broad longsword",
@@ -2110,7 +2254,8 @@
    },
    "fee": 219,
    "secs": 22,
-   "worth": 2854
+   "worth": 2854,
+   "icon": "data/icons/4cef746d16e1.jpg"
   },
   {
    "id": "Lavish warhammer",
@@ -2129,7 +2274,8 @@
    },
    "fee": 58,
    "secs": 22,
-   "worth": 2897
+   "worth": 2897,
+   "icon": "data/icons/60e8fe3458ca.jpg"
   },
   {
    "id": "Knight's sword",
@@ -2153,7 +2299,8 @@
    },
    "fee": 153,
    "secs": 22,
-   "worth": 3047
+   "worth": 3047,
+   "icon": "data/icons/3de7a8bd28bb.jpg"
   },
   {
    "id": "Ornate mace",
@@ -2172,7 +2319,8 @@
    },
    "fee": 40,
    "secs": 22,
-   "worth": 3104
+   "worth": 3104,
+   "icon": "data/icons/4b5e1d44bfdc.jpg"
   },
   {
    "id": "Lion's roar Kilij",
@@ -2194,7 +2342,8 @@
    },
    "fee": 0,
    "secs": 22,
-   "worth": 3205
+   "worth": 3205,
+   "icon": "data/icons/310be76280eb.jpg"
   },
   {
    "id": "Sheet steel",
@@ -2209,7 +2358,8 @@
    },
    "fee": 0,
    "secs": 12,
-   "worth": 84
+   "worth": 84,
+   "icon": "data/icons/9d79151ebf30.jpg"
   },
   {
    "id": "Trollbane hammer",
@@ -2228,7 +2378,8 @@
    },
    "fee": 64,
    "secs": 24,
-   "worth": 1854
+   "worth": 1854,
+   "icon": "data/icons/35194e7a8ada.jpg"
   },
   {
    "id": "Owl’s Claw sabre",
@@ -2247,7 +2398,8 @@
    },
    "fee": 64,
    "secs": 24,
-   "worth": 2959
+   "worth": 2959,
+   "icon": "data/icons/6ee85158b43c.jpg"
   },
   {
    "id": "Sword of Sir Valentine",
@@ -2271,7 +2423,8 @@
    },
    "fee": 160,
    "secs": 24,
-   "worth": 3081
+   "worth": 3081,
+   "icon": "data/icons/00236c9b13d2.jpg"
   },
   {
    "id": "Duelling longsword",
@@ -2294,7 +2447,8 @@
    },
    "fee": 309,
    "secs": 24,
-   "worth": 3662
+   "worth": 3662,
+   "icon": "data/icons/50404e71d258.jpg"
   },
   {
    "id": "Four Evangelists' longsword",
@@ -2314,7 +2468,8 @@
    },
    "fee": 490,
    "secs": 26,
-   "worth": 3311
+   "worth": 3311,
+   "icon": "data/icons/95dfa936642c.jpg"
   },
   {
    "id": "Master Menhart's longsword",
@@ -2334,7 +2489,8 @@
    },
    "fee": 424,
    "secs": 26,
-   "worth": 5057
+   "worth": 5057,
+   "icon": "data/icons/f9c6ddf8dcaf.jpg"
   },
   {
    "id": "Madman's longsword",
@@ -2355,7 +2511,8 @@
    },
    "fee": 485,
    "secs": 26,
-   "worth": 5083
+   "worth": 5083,
+   "icon": "data/icons/84cfd0557d68.jpg"
   },
   {
    "id": "Adorned axe (from the relic)",
@@ -2375,7 +2532,8 @@
    },
    "fee": 46,
    "secs": 28,
-   "worth": 700
+   "worth": 700,
+   "icon": "data/icons/9eb98e52471e.jpg"
   },
   {
    "id": "Adorned axe (replica)",
@@ -2394,7 +2552,8 @@
    },
    "fee": 75,
    "secs": 28,
-   "worth": 700
+   "worth": 700,
+   "icon": "data/icons/a03bcd146e3c.jpg"
   },
   {
    "id": "Dragon fang Axe",
@@ -2418,7 +2577,8 @@
    },
    "fee": 93,
    "secs": 28,
-   "worth": 1444
+   "worth": 1444,
+   "icon": "data/icons/eb2d7ca65c75.jpg"
   },
   {
    "id": "Poleaxe",
@@ -2439,7 +2599,8 @@
    },
    "fee": 80,
    "secs": 28,
-   "worth": 1656
+   "worth": 1656,
+   "icon": "data/icons/043e17bc4e97.jpg"
   },
   {
    "id": "St. George's sword",
@@ -2465,7 +2626,8 @@
    },
    "fee": 92,
    "secs": 24,
-   "worth": 1866
+   "worth": 1866,
+   "icon": "data/icons/8325381a61d5.jpg"
   },
   {
    "id": "Basilisk warhammer",
@@ -2486,7 +2648,8 @@
    },
    "fee": 554,
    "secs": 28,
-   "worth": 2550
+   "worth": 2550,
+   "icon": "data/icons/fb0e89e266c9.jpg"
   },
   {
    "id": "Longsword of the Four Evangelists",
@@ -2509,7 +2672,8 @@
    },
    "fee": 636,
    "secs": 28,
-   "worth": 3311
+   "worth": 3311,
+   "icon": "data/icons/8c8b6466ef93.jpg"
   },
   {
    "id": "Lingua belli longsword",
@@ -2536,7 +2700,8 @@
    },
    "fee": 881,
    "secs": 28,
-   "worth": 5204
+   "worth": 5204,
+   "icon": "data/icons/63a237371132.jpg"
   },
   {
    "id": "Henry's sword reforged",
@@ -2556,7 +2721,8 @@
    },
    "fee": 1377,
    "secs": 28,
-   "worth": 5588
+   "worth": 5588,
+   "icon": "data/icons/4f9a2f0b4497.jpg"
   },
   {
    "id": "steel",
@@ -2587,7 +2753,8 @@
    "fee": 0,
    "secs": 0,
    "worth": 0,
-   "aux": true
+   "aux": true,
+   "icon": "data/icons/e025668451e7.jpg"
   },
   {
    "id": "holy nails",
@@ -2602,7 +2769,8 @@
    "fee": 0,
    "secs": 0,
    "worth": 0,
-   "aux": true
+   "aux": true,
+   "icon": "data/icons/68b2082f8104.jpg"
   },
   {
    "id": "broken crankshafts",
@@ -2618,7 +2786,8 @@
    "fee": 0,
    "secs": 0,
    "worth": 0,
-   "aux": true
+   "aux": true,
+   "icon": "data/icons/3de880521475.jpg"
   },
   {
    "id": "ghostly horseshoes",
@@ -2634,7 +2803,8 @@
    "fee": 0,
    "secs": 0,
    "worth": 0,
-   "aux": true
+   "aux": true,
+   "icon": "data/icons/26fef0e9763c.jpg"
   },
   {
    "id": "leather",
@@ -2649,7 +2819,8 @@
    "fee": 0,
    "secs": 0,
    "worth": 0,
-   "aux": true
+   "aux": true,
+   "icon": "data/icons/188fb9432967.jpg"
   },
   {
    "id": "Pig skin",
@@ -2664,7 +2835,8 @@
    "fee": 0,
    "secs": 0,
    "worth": 0,
-   "aux": true
+   "aux": true,
+   "icon": "data/icons/51544ca6d205.jpg"
   },
   {
    "id": "Cow skin",
@@ -2679,7 +2851,8 @@
    "fee": 0,
    "secs": 0,
    "worth": 0,
-   "aux": true
+   "aux": true,
+   "icon": "data/icons/386ea56f19f5.jpg"
   },
   {
    "id": "Deer skin",
@@ -2695,7 +2868,8 @@
    "fee": 0,
    "secs": 0,
    "worth": 0,
-   "aux": true
+   "aux": true,
+   "icon": "data/icons/7ee3f1489667.jpg"
   }
  ]
 }

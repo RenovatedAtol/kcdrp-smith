@@ -19,14 +19,15 @@
 - Рецепты — [вики сервера](https://wiki.kcdroleplay.com/recipes/), собираются скриптом `tools/build_data.py` в `data/smithing.json`.
 - Цены — публичный [API сервера](https://account.kcdroleplay.com/api/ucp/realm?world=ru). Сервер не даёт браузеру читать его с других сайтов (CORS), поэтому GitHub Action `.github/workflows/prices.yml` каждые 30 минут копирует цены в ветку `prices` (`prices.json`), а страница читает её. Запасной источник — копия аукциона из [калькулятора DanekKuznec](https://danekkuznec.github.io/kcd2-rp-crafting/).
 - Цена товара в грузе — поле `instant` аукциона (совпадает с окном упаковки в игре); где его нет — значения из окна упаковки или рыночная цена сервера.
-- Русские названия предметов — из данных калькулятора DanekKuznec.
+- Русские названия и иконки предметов — из данных калькулятора DanekKuznec (`data.js`, `ricon.js`); иконки — игровая графика Kingdom Come: Deliverance II (© Warhorse Studios), лежат в `data/icons/`.
 
 ## Обновить рецепты
 
 ```sh
 curl -sL https://wiki.kcdroleplay.com/recipes/ -o /tmp/recipes.html
 curl -sL https://danekkuznec.github.io/kcd2-rp-crafting/data.js -o /tmp/danek.js
-python3 -I tools/build_data.py /tmp/recipes.html /tmp/danek.js > data/smithing.json
+curl -sL https://danekkuznec.github.io/kcd2-rp-crafting/ricon.js -o /tmp/ricon.js
+python3 -I tools/build_data.py /tmp/recipes.html /tmp/danek.js /tmp/ricon.js --icons data/icons > data/smithing.json
 ```
 
 Цены вручную: вкладка **Actions → prices → Run workflow**.

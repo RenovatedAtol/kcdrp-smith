@@ -2,16 +2,26 @@
 """Build data/smithing.json from the KCD Roleplay wiki.
 
 Usage:
-  python3 -I tools/build_data.py WIKI_RECIPES_HTML [DANEK_DATA_JS] > data/smithing.json
+  python3 -I tools/build_data.py WIKI_RECIPES_HTML [DANEK_DATA_JS [DANEK_RICON_JS --icons DIR]] > data/smithing.json
 
 WIKI_RECIPES_HTML  saved copy of https://wiki.kcdroleplay.com/recipes/
 DANEK_DATA_JS      optional saved copy of https://danekkuznec.github.io/kcd2-rp-crafting/data.js,
-                   used only for the Russian names of weapons and materials
+                   used for the Russian names of weapons and materials and their icons
+DANEK_RICON_JS     optional saved copy of .../ricon.js (icons of raw goods)
+--icons DIR        write the icons there as files and reference them from the JSON
 """
+import base64
+import hashlib
 import html
 import json
+import os
 import re
 import sys
+
+# realm good id -> key of the raw goods' icons in ricon.js
+RICON = {"ore": "fe", "coal": "co", "copperore": "cuo", "silver": "ag", "gold": "au", "hide": "hd", "antler": "antl",
+         "silvernugget": "nug", "meteoric": "met", "finesilver": "agp", "haft": "shaft", "steel": "steel",
+         "jasper": "jasp", "tincal": "borax"}
 
 # wiki ingredient name -> material id. Ids of goods are the realm API's ids (good:<id>).
 GOODS = {
@@ -155,9 +165,57 @@ def danek_names(path):
     return {"by_sig": out, "code": code}
 
 
+def json_object_after(t, key):
+    """the {...} that follows "key": in a JS file"""
+    i = t.index(key)
+    j = t.index("{", i)
+    depth = 0
+    for k in range(j, len(t)):
+        depth += {"{": 1, "}": -1}.get(t[k], 0)
+        if depth == 0:
+            return json.loads(t[j:k + 1])
+    raise ValueError(key)
+
+
+def danek_icons(data_js, ricon_js):
+    """(level, Russian name) -> data URI, Russian name -> data URI, ricon key -> data URI"""
+    t = open(data_js, encoding="utf-8", errors="replace").read()
+    icons = json_object_after(t, '"icons":')
+    by_level, by_name = {}, {}
+    for m in re.finditer(r'\{"s":"(\w+)","l":(\d+),"c":"[^"]*","n":"([^"]+)"[^{}]*?(?:\{[^}]*\}[^{}]*?)*"ic":"([^"]+)"', t):
+        kind, lv, name, ic = m.group(1), int(m.group(2)), m.group(3), m.group(4)
+        if ic not in icons:
+            continue
+        if kind == "w":
+            by_level.setdefault((lv, name), icons[ic])
+        if kind == "w" or name not in by_name:
+            by_name[name] = icons[ic]
+    r = open(ricon_js, encoding="utf-8", errors="replace").read()
+    ricon = dict(re.findall(r'"(\w+)":\s*"(data:image/[^"]+)"', r))
+    return by_level, by_name, ricon
+
+
+def save_icon(uri, folder):
+    head, b64 = uri.split(",", 1)
+    ext = "webp" if "webp" in head else "png" if "png" in head else "jpg"
+    raw = base64.b64decode(b64)
+    name = hashlib.sha1(raw).hexdigest()[:12] + "." + ext
+    path = os.path.join(folder, name)
+    if not os.path.exists(path):
+        with open(path, "wb") as f:
+            f.write(raw)
+    return path.replace(os.sep, "/")
+
+
 def main():
-    page = open(sys.argv[1], encoding="utf-8", errors="replace").read()
-    dn = danek_names(sys.argv[2] if len(sys.argv) > 2 else None)
+    args = sys.argv[1:]
+    icons_dir = None
+    if "--icons" in args:
+        i = args.index("--icons")
+        icons_dir = args[i + 1]
+        del args[i:i + 2]
+    page = open(args[0], encoding="utf-8", errors="replace").read()
+    dn = danek_names(args[1] if len(args) > 1 else None)
     recipes, seen, used = [], {}, {}
     for lv, cells in smithing_rows(page):
         mk = cells[0]
@@ -203,6 +261,28 @@ def main():
                     (x["ru"] for x in recipes if x["en"] == k and x["ru"]), k), "recipe": True}
             else:
                 sys.exit(f"unknown ingredient: {k}")
+    if icons_dir and len(args) > 2:
+        os.makedirs(icons_dir, exist_ok=True)
+        by_level, by_name, ricon = danek_icons(args[1], args[2])
+        missing = []
+        alias = {"Рогатая гарда": "Гарда", "Осколки рогов": "Оленьи рога"}   # the names DanekKuznec's data uses
+        for r in recipes:
+            uri = by_level.get((r["level"], r["ru"])) or by_name.get(r["ru"]) or by_name.get(alias.get(r["ru"], ""))
+            if uri:
+                r["icon"] = save_icon(uri, icons_dir)
+            elif not r.get("aux"):
+                missing.append(r["ru"] or r["en"])
+        for k, m in materials.items():
+            uri = ricon.get(RICON.get(m["id"], "")) or by_name.get(m["ru"]) or by_name.get(alias.get(m["ru"], ""))
+            if not uri and m["recipe"]:
+                rec = next((x for x in recipes if x["en"] == k and x.get("icon")), None)
+                if rec:
+                    m["icon"] = rec["icon"]
+                    continue
+            if uri:
+                m["icon"] = save_icon(uri, icons_dir)
+        no_mat = [m["ru"] for m in materials.values() if not m.get("icon")]
+        print(f"icons: {len(recipes) - len(missing)} recipes, missing {missing}; materials without: {no_mat}", file=sys.stderr)
     json.dump({"source": "https://wiki.kcdroleplay.com/recipes/", "materials": materials, "recipes": recipes},
               sys.stdout, ensure_ascii=False, indent=1)
 
