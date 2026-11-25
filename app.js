@@ -193,7 +193,6 @@ function evaluate(r, fill) {
     if (fill && rest > 1e-9) { n = Math.ceil(rest / fill.pack - 1e-9); cost += n * fill.cost; value += n * fill.pack; }
     Object.assign(res, { fits: true, k, n, crate: cost - Math.min(cap, value), unfilled: Math.max(0, cap - value) });
   }
-  res.time = res.k * (r.secs || 0);
   return res;
 }
 
@@ -226,7 +225,6 @@ const COLS = [
   { key: "loss", t: "Потеря за шт.", n: true, v: (x) => x.loss },
   { key: "crateTxt", t: "В ящик", sortless: true },
   { key: "crate", t: "Потеря ящика", n: true, v: (x) => x.crate },
-  { key: "time", t: "Время", n: true, v: (x) => x.time },
 ];
 
 function render() {
@@ -273,7 +271,7 @@ function render() {
       <td>${addBtn(x)}</td><td class="n">${x.r.level}</td><td>${nameCell(x.r)}${na}</td><td class="mats">${esc(matsText(x.r))}</td>
       <td class="n">${fmt(x.r.fee / x.r.yield)}</td><td class="n">${fmt(x.M)}</td><td class="n">${fmt(x.P)}</td>
       <td class="n ${effClass(x.eff)}">${x.eff != null ? fmt(x.eff * 100) + "%" : "—"}</td><td class="n">${fmt(x.loss)}</td>
-      <td>${crateText(x)}</td><td class="n">${fmt(x.crate)}</td><td class="n">${x.time ? fmtTime(x.time) : "—"}</td></tr>`;
+      <td>${crateText(x)}</td><td class="n">${fmt(x.crate)}</td></tr>`;
     if (open.has(x.r.id)) h += `<tr class="detail"><td></td><td></td><td colspan="${COLS.length - 1}">${breakdown(x.r)}</td></tr>`;
   }
   if (!rows.length) h += `<tr><td colspan="${COLS.length + 1}" class="src-tag">Нет рецептов под эти фильтры.</td></tr>`;
@@ -284,7 +282,6 @@ function render() {
   renderCart(fill);
 }
 
-function fmtTime(s) { return s >= 60 ? `${Math.floor(s / 60)} мин ${s % 60 ? (s % 60) + " с" : ""}` : `${s} с`; }
 const SRC = { auction: "аукцион", realm: "казна", craft: "сделать", price: "ваша цена" };
 
 function breakdown(r) {
@@ -377,7 +374,7 @@ function craftDepth(key, seen = new Set()) {
 function cartPlan(fill) {
   const cap = S.cap, lines = [], crates = [], crafts = [], demand = new Map();
   const add = (k, q) => demand.set(k, (demand.get(k) || 0) + q);
-  let fees = 0, secs = 0, missing = [];
+  let fees = 0, missing = [];
   for (const l of S.cart) {
     const r = recipeById(l.id);
     if (!r) continue;
@@ -387,7 +384,7 @@ function cartPlan(fill) {
     if (!qty) continue;
     const n = Math.ceil(qty / r.yield);
     crafts.push({ r, n, made: n * r.yield, top: true });
-    fees += n * r.fee; secs += n * (r.secs || 0);
+    fees += n * r.fee;
     for (const [k, q] of Object.entries(r.items)) add(k, q * n);
     // packing: one kind of piece per crate, the rest topped up with the filler
     const per = x.fits ? x.k : 1;
@@ -408,7 +405,7 @@ function cartPlan(fill) {
     if (!need) continue;
     const r = recipeOf(key), n = Math.ceil(need / r.yield - 1e-9);
     crafts.push({ r, n, made: n * r.yield, need, key });
-    fees += n * r.fee; secs += n * (r.secs || 0);
+    fees += n * r.fee;
     demand.delete(key);
     for (const [k, q] of Object.entries(r.items)) {
       add(k, q * n);
@@ -422,7 +419,7 @@ function cartPlan(fill) {
   for (const b of buy) cost += b.c.v != null ? b.c.v * b.q : 0;
   if (fill) cost += fillTotal * fill.cost;
   const value = crates.reduce((t, c) => t + c.value, 0);
-  return { lines, crates, crafts, buy, fees, secs, fillTotal, cost, value, missing };
+  return { lines, crates, crafts, buy, fees, fillTotal, cost, value, missing };
 }
 
 function renderCart(fill) {
@@ -470,8 +467,7 @@ function renderCart(fill) {
   h += `<table class="sub-table totals"><tr><td>Ящиков</td><td class="n">${p.crates.length}</td></tr>
     <tr><td>Потратите всего</td><td class="n">${fmt(p.cost)} гр.</td></tr>
     <tr><td>Засчитается в грузы</td><td class="n">${fmt(p.value)} гр.</td></tr>
-    <tr><td>Потеря</td><td class="n ${loss > 0.5 ? "bad" : "good"}">${fmt(loss)} гр.</td></tr>
-    <tr><td>Время у станка</td><td class="n">${p.secs ? fmtTime(p.secs) : "—"}</td></tr></table>`;
+    <tr><td>Потеря</td><td class="n ${loss > 0.5 ? "bad" : "good"}">${fmt(loss)} гр.</td></tr></table>`;
   if (p.missing.length) h += `<p class="hint bad">Нет цены для: ${esc(p.missing.join(", "))} — они не посчитаны.</p>`;
   h += `</div></div>`;
   // crates
