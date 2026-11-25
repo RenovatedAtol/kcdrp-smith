@@ -15,11 +15,11 @@ const MAX_LEVEL = 8;
 const STORE = "kcdrp-smith-v1";
 const DEFAULTS = {
   buySource: "avg", cap: 450, packFee: 25, filler: "coal", ov: {}, excl: [], level: "all", search: "",
-  onlyFit: false, hideNA: true, hideParts: false, sort: { key: "eff", dir: -1 }, cart: [], tab: "items",
+  onlyFit: false, hideNA: true, hideParts: false, sort: { key: "eff", dir: -1 }, cart: [], tab: "items", origin: "Kuttenberg", stock: 2, hire: false,
 };
 
 let DATA = null;            // data/smithing.json
-let SERVER = { market: {}, auction: {}, updated: null, label: "" };
+let SERVER = { market: {}, auction: {}, towns: [], updated: null, label: "" };
 let S = load();
 let open = new Set();       // recipe ids with their breakdown open
 
@@ -47,13 +47,13 @@ async function fetchPrices(bust) {
       if (!r.ok) throw new Error("HTTP " + r.status);
       const d = await r.json();
       if (src.kind === "own") {
-        SERVER = { market: d.market || {}, auction: d.auction || {}, updated: d.updated, label: src.label };
+        SERVER = { market: d.market || {}, auction: d.auction || {}, towns: d.towns || [], updated: d.updated, label: src.label };
       } else {
         const auction = {};
         for (const a of (d.auction && d.auction.items) || []) {
           if (String(a.item).startsWith("good:")) auction[a.item.slice(5)] = a;
         }
-        SERVER = { market: {}, auction, updated: d.updated, label: src.label };
+        SERVER = { market: {}, auction, towns: [], updated: d.updated, label: src.label };
       }
       return true;
     } catch (e) { errors.push(`${src.label}: ${e.message}`); }
@@ -299,6 +299,7 @@ function render() {
   $("excluded").innerHTML = S.excl.map((k) => `<span class="chip x" data-k="${esc(k)}">${esc(MAT()[k] ? MAT()[k].ru : k)}</span>`).join("");
   renderPrices();
   renderCart(fill);
+  renderRoute(fill);
 }
 
 const SRC = { auction: "аукцион", craft: "сделать", price: "ваша цена" };
@@ -551,8 +552,91 @@ function renderPricesDialog() {
     "Для кузнечного сырья она совпадает с игрой, для товаров других ремёсел может отличаться — точное число видно в окне упаковки («Что принести»). «—» — нет данных. Цены сервера без ваших правок.";
 }
 
+
+// ---------------------------------------------------------------- where to take the crates
+const TOWN_RU = {
+  "Kuttenberg": "Кутна-Гора", "Suchdol": "Сухдол", "Miskowitz": "Мышковицы", "Grund": "Грунта", "Pschitoky": "Пржитоки",
+  "Sigismund's camp": "Лагерь Сигизмунда", "Maleshov": "Малешов", "Bylany": "Биланы", "Raborsch": "Ратборж",
+  "Opatowitz": "Опатовицы", "Devil's Den": "Чёртово логово", "Old Kutna": "Стара-Кутна", "Bohunowitz": "Богуновице",
+  "Wysoka": "Высока", "Horschan": "Горжаны",
+};
+const STOCKS = ["еда", "древесина и топливо", "металл", "ткань и кожа", "роскошь"];
+const townRu = (n) => TOWN_RU[n] || n;
+// the wiki gives three points: an empty stock x1.4, half full about x0.85, full x0.6; this curve passes through them
+const needOf = (lv) => { const x = Math.min(1, Math.max(0, lv / 100)); return 1.4 - 1.4 * x + 0.6 * x * x; };
+const MIN_KM = 1.5;
+
+function routeGain(km, lv) {
+  return Math.min(GAIN_MAX, GAIN_PER_KM * km * needOf(lv));
+}
+
+function renderRoute(fill) {
+  const towns = SERVER.towns || [];
+  const sel = $("routeOrigin");
+  if (!towns.length) {
+    $("route").innerHTML = "";
+    $("routeInfo").textContent = "Данных о городах в загруженных ценах нет — нажмите «Обновить цены» чуть позже.";
+    return;
+  }
+  const names = towns.map((t) => t.name);
+  if (!names.includes(S.origin)) S.origin = names[0];
+  const opts = towns.slice().sort((a, b) => townRu(a.name).localeCompare(townRu(b.name), "ru"))
+    .map((t) => `<option value="${esc(t.name)}"${t.name === S.origin ? " selected" : ""}>${esc(townRu(t.name))}</option>`).join("");
+  if (sel.dataset.opts !== opts) { sel.innerHTML = opts; sel.dataset.opts = opts; }
+  sel.value = S.origin;
+  $("routeStock").value = String(S.stock);
+  $("routeHire").checked = !!S.hire;
+
+  const o = towns.find((t) => t.name === S.origin);
+  const k = +S.stock, cut = S.hire ? 0.85 : 1;
+  const plan = S.cart.length ? cartPlan(fill) : null;
+  const crates = plan ? plan.crates.filter((c) => c.value > 0) : [];
+  const rows = towns.map((t) => {
+    const km = Math.hypot(t.x - o.x, t.y - o.y) / 1000;
+    const lv = t.lv ? t.lv[k] : null;
+    const noStore = !t.lv || t.lv.every((v) => !v);       // a camp without a warehouse
+    const ok = t.name !== o.name && km >= MIN_KM && !t.paused && !noStore;
+    const gain = ok ? routeGain(km, lv) * cut : null;
+    let profit = null;
+    if (ok && plan && crates.length) {
+      // a crate worth under 300 gr earns its gain in proportion
+      profit = crates.reduce((s, c) => s + c.value + gain * Math.min(1, c.value / 300), 0) - plan.cost;
+    }
+    return { t, km, lv, noStore, ok, gain, profit,
+      why: t.name === o.name ? "город упаковки" : noStore ? "склад не ведётся" : t.paused ? "не покупает" : km < MIN_KM ? `ближе ${MIN_KM} км` : "" };
+  });
+  rows.sort((a, b) => (b.ok - a.ok) || ((plan && crates.length ? (b.profit ?? -1e9) - (a.profit ?? -1e9) : (b.gain ?? -1) - (a.gain ?? -1))) || a.km - b.km);
+
+  const coalCost = fill ? Math.ceil(S.cap / fill.pack - 1e-9) * fill.cost + packFee() : null;
+  let h = `<tr><th>Город</th><th class="n">Расстояние</th><th class="n">Склад «${esc(STOCKS[k])}»</th><th class="n">Нужда ≈</th><th class="n">Прибыль с дороги за ящик</th><th class="n">Заплатят за полный ящик</th>`;
+  if (coalCost != null) h += `<th class="n">Ящик угля: итог</th>`;
+  if (plan && crates.length) h += `<th class="n">Ваша корзина (${crates.length} ящ.): итог</th>`;
+  h += `</tr>`;
+  for (const x of rows) {
+    const need = x.lv != null && !x.noStore ? needOf(x.lv) : null;
+    const lvCls = x.lv == null || x.noStore ? "" : x.lv < 34 ? "good" : x.lv < 67 ? "mid" : "bad";
+    h += `<tr class="${x.ok ? "" : "na"}"><td>${esc(townRu(x.t.name))}${x.why ? ` <span class="tag na">${esc(x.why)}</span>` : ""}${x.t.needs && x.t.needs.length ? `<span class="en">нуждается: ${esc(x.t.needs.map((n) => ({ food: "еда", timber: "древесина", metal: "металл", cloth: "ткань и кожа", luxury: "роскошь" }[n] || n)).join(", "))}</span>` : ""}</td>
+      <td class="n">${x.t.name === S.origin ? "—" : fmt(x.km, 1) + " км"}</td>
+      <td class="n ${lvCls}">${x.noStore ? "—" : fmt(x.lv, 0) + "%"}</td><td class="n">${need != null ? "×" + fmt(need, 2) : "—"}</td>
+      <td class="n">${x.ok ? "+" + fmt(x.gain, 0) + " гр." + (x.gain >= GAIN_MAX * cut - 0.5 ? ' <span class="src-tag">(максимум)</span>' : "") : "—"}</td>
+      <td class="n">${x.ok ? fmt(S.cap + x.gain, 0) + " гр." : "—"}</td>`;
+    if (coalCost != null) {
+      const v = x.ok ? S.cap + x.gain - coalCost : null;
+      h += `<td class="n ${v == null ? "" : v >= 0 ? "good" : "bad"}">${v == null ? "—" : (v >= 0 ? "+" : "") + fmt(v, 0)}</td>`;
+    }
+    if (plan && crates.length) h += `<td class="n ${x.profit == null ? "" : x.profit >= 0 ? "good" : "bad"}">${x.profit == null ? "—" : (x.profit >= 0 ? "+" : "") + fmt(x.profit, 0) + " гр."}</td>`;
+    h += `</tr>`;
+  }
+  $("route").innerHTML = h;
+  $("routeInfo").innerHTML =
+    `Склады — данные сервера на ${SERVER.updated ? new Date(SERVER.updated).toLocaleString("ru-RU", { hour: "2-digit", minute: "2-digit", day: "numeric", month: "short" }) : "—"}, расстояния — по прямой между центрами городов. ` +
+    `«Итог» — сколько вы заработаете после продажи: стоимость ящиков + прибыль с дороги − все затраты (материалы, станки, добивка, упаковка ${fmt(packFee(), 0)} гр.). ` +
+    (plan && crates.length ? "" : "Добавьте предметы в корзину, чтобы увидеть итог по ним. ") +
+    `Не учтено: маршрут дня (×1,1), свежесть груза, дневной лимит прибыли, точное место вашей кузницы. Множитель нужды — оценка по вики.`;
+}
+
 // ---------------------------------------------------------------- tabs
-const TABS = ["items", "prices"];
+const TABS = ["items", "prices", "route"];
 function showTab(t, push = true) {
   if (!TABS.includes(t)) t = "items";
   S.tab = t; save();
@@ -571,6 +655,9 @@ function bind() {
   for (const b of document.querySelectorAll(".tab")) b.onclick = () => showTab(b.dataset.tab);
   window.addEventListener("hashchange", () => showTab(location.hash.slice(1), false));
   $("cartCount").onclick = () => showTab("items");
+  $("routeOrigin").onchange = (e) => { S.origin = e.target.value; save(); render(); };
+  $("routeStock").onchange = (e) => { S.stock = +e.target.value; save(); render(); };
+  $("routeHire").onchange = (e) => { S.hire = e.target.checked; save(); render(); };
   $("buySource").value = S.buySource;
   $("cap").value = S.cap;
   $("packFee").value = packFee();

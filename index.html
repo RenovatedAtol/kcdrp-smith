@@ -48,6 +48,7 @@
 <nav class="tabs" role="tablist">
   <button type="button" role="tab" class="tab" data-tab="items" id="tabBtnItems">Корзина и предметы</button>
   <button type="button" role="tab" class="tab" data-tab="prices" id="tabBtnPrices">Материалы и цены</button>
+  <button type="button" role="tab" class="tab" data-tab="route" id="tabBtnRoute">Куда везти</button>
 </nav>
 
 <div id="tab-items" class="tab-page" role="tabpanel">
@@ -90,6 +91,26 @@
   <h3>Редкие находки и материалы других ремёсел</h3>
   <p class="hint">Сервер не публикует их цены: по умолчанию их нет в наличии. Впишите цену, если можете их достать.</p>
   <div class="scroll"><table id="manual"></table></div>
+</section>
+</div>
+
+<div id="tab-route" class="tab-page" role="tabpanel" hidden>
+<section>
+  <h2>Куда везти ящики</h2>
+  <p class="hint">Груз продаётся за свою стоимость плюс прибыль с дороги: 25 гр. за км по прямой от места упаковки × нужда города в этом товаре, не больше 150 гр. за ящик. Нужда зависит от того, насколько полон склад города: пустой ×1.4, наполовину ×0.85, полный ×0.6. Продать можно не ближе 1,5 км от места упаковки и не в своём городе.</p>
+  <div class="filters">
+    <label>Ящик упакован в <select id="routeOrigin"></select></label>
+    <label>Склад <select id="routeStock">
+      <option value="2">металл (кузнец, бронник)</option>
+      <option value="0">еда</option>
+      <option value="1">древесина и топливо</option>
+      <option value="3">ткань и кожа</option>
+      <option value="4">роскошь</option>
+    </select></label>
+    <label><input id="routeHire" type="checkbox"> наёмная телега (−15% награды)</label>
+  </div>
+  <p class="hint" id="routeInfo"></p>
+  <div class="scroll"><table id="route"></table></div>
 </section>
 </div>
 

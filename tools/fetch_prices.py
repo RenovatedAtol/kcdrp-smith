@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Fetch the KCD Roleplay realm data and print a small prices.json for the site.
 
-Keeps only what the calculator needs: the market (realm) prices and the auction houses'
-figures of every good. Usage: python3 tools/fetch_prices.py [world] > prices.json
+Keeps only what the calculator needs: the market prices, the auction houses'
+figures of every good and the towns' warehouse stocks. Usage: python3 tools/fetch_prices.py [world] > prices.json
 """
 import json
 import sys
@@ -38,12 +38,21 @@ def main():
         auction[item[5:]] = {k: a.get(k) for k in ("name", "low", "avg", "instant", "qty", "sold")}
     if not market or not auction:
         raise SystemExit("unexpected answer: no market or auction")
+    # towns: where they stand and how full their five warehouse stocks are
+    # (food, timber and fuel, metal, cloth and leather, luxury) - a trade pack pays more where its stock is low
+    towns = []
+    for t in d.get("towns", []):
+        st = t.get("stores") or {}
+        towns.append({"name": t.get("town"), "x": t.get("x"), "y": t.get("y"),
+                      "lv": st.get("lv"), "needs": st.get("needs"), "paused": st.get("paused")})
     out = {
         "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "world": WORLD,
+        "land": d.get("land"),
         "source": URL,
         "market": market,
         "auction": auction,
+        "towns": towns,
     }
     json.dump(out, sys.stdout, ensure_ascii=False, separators=(",", ":"))
 
