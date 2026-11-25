@@ -9,6 +9,8 @@ const PRICE_SOURCES = [
 ];
 // pack prices of goods the auction has no "instant" figure for (from the game's packing window)
 const DEFAULT_PACK = { steel: 9.5, haft: 6, foundhorseshoe: 3, holynail: 4, brokenrod: 6, ghosthorseshoe: 38 };
+// levels 9 and 10 are left out: every piece of theirs is worth several crates and would mostly burn
+const MAX_LEVEL = 8;
 const STORE = "kcdrp-smith-v1";
 const DEFAULTS = {
   buySource: "avg", cap: 450, filler: "coal", ov: {}, excl: [], level: "all", search: "",
@@ -231,12 +233,12 @@ function render() {
   resetMemo();
   const fill = filler();
   const excl = new Set(S.excl);
-  const all = DATA.recipes.filter((r) => !r.aux).map((r) => evaluate(r, fill));
+  const all = DATA.recipes.filter((r) => !r.aux && r.level <= MAX_LEVEL).map((r) => evaluate(r, fill));
   for (const x of all) x.excluded = [...usedBy(x.r)].some((k) => excl.has(k));
 
   // best per level
   let bh = "<tr><th>Ур.</th><th>Предмет</th><th class='n'>Себестоимость</th><th class='n'>В груз</th><th class='n'>КПД</th><th class='n'>Потеря за шт.</th><th>Ящик</th><th class='n'>Потеря ящика</th></tr>";
-  for (let L = 1; L <= 10; L++) {
+  for (let L = 1; L <= MAX_LEVEL; L++) {
     const c = all.filter((x) => x.r.level === L && !x.na && x.fits && !x.excluded && !x.r.en.startsWith("jobtool"));
     if (!c.length) { bh += `<tr class="na"><td class="n">${L}</td><td colspan="7">ни один доступный предмет не помещается в ящик</td></tr>`; continue; }
     c.sort((a, b) => b.eff - a.eff || b.P - a.P);
@@ -354,7 +356,8 @@ function bind() {
   const goods = Object.keys(MAT()).filter((k) => MAT()[k].kind === "good").sort((a, b) => MAT()[a].ru.localeCompare(MAT()[b].ru, "ru"));
   $("filler").innerHTML = '<option value="">ничем</option>' + goods.map((k) => `<option value="${esc(k)}">${esc(MAT()[k].ru)}</option>`).join("");
   $("filler").value = S.filler;
-  const lv = ["all", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const lv = ["all", ...Array.from({ length: MAX_LEVEL }, (_, i) => i + 1)];
+  if (S.level !== "all" && +S.level > MAX_LEVEL) S.level = "all";
   const drawLevels = () => ($("levels").innerHTML = lv.map((l) => `<span class="chip${String(S.level) === String(l) ? " on" : ""}" data-l="${l}">${l === "all" ? "все уровни" : l}</span>`).join(""));
   drawLevels();
 
