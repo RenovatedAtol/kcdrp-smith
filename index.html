@@ -44,6 +44,12 @@
   <div class="scroll dlg-scroll"><table id="pricesTable"></table></div>
 </dialog>
 
+<nav class="tabs" role="tablist">
+  <button type="button" role="tab" class="tab" data-tab="items" id="tabBtnItems">Корзина и предметы</button>
+  <button type="button" role="tab" class="tab" data-tab="prices" id="tabBtnPrices">Материалы и цены</button>
+</nav>
+
+<div id="tab-items" class="tab-page" role="tabpanel">
 <section id="cartSection">
   <h2>Корзина</h2>
   <div id="cart"></div>
@@ -70,9 +76,11 @@
   <p class="hint">«+» — добавить предмет в корзину (на один ящик). Нажмите на строку, чтобы увидеть расчёт по материалам, на заголовок столбца — чтобы отсортировать.</p>
   <div class="scroll"><table id="recipes"></table></div>
 </section>
+</div>
 
+<div id="tab-prices" class="tab-page" role="tabpanel" hidden>
 <section>
-  <h2>Цены</h2>
+  <h2>Материалы и цены</h2>
   <p class="hint">Пустое поле — значение с сервера (оно показано серым). Впишите своё число, чтобы заменить его; ваши цены хранятся в этом браузере. <b>В груз</b> — сколько товар засчитывается в ящик. <b>Способ</b> — откуда брать: «авто» выбирает самое дешёвое: купить на аукционе или сделать самому. Галочка «искл.» убирает рецепты с этим материалом.</p>
   <h3>Сырьё</h3>
   <div class="scroll"><table id="goods"></table></div>
@@ -82,6 +90,7 @@
   <p class="hint">Сервер не публикует их цены: по умолчанию их нет в наличии. Впишите цену, если можете их достать.</p>
   <div class="scroll"><table id="manual"></table></div>
 </section>
+</div>
 
 <section class="notes">
   <h2>Как это считается</h2>

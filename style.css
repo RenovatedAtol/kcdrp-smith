@@ -100,3 +100,11 @@ dialog::backdrop { background: rgba(0,0,0,.6); }
 .ico.sm { width: 24px; height: 24px; flex-basis: 24px; border-radius: 4px; }
 .ico.none { display: inline-flex; align-items: center; justify-content: center; color: var(--dim); font-size: 11px; font-weight: 600; }
 .ico.sm.none { font-size: 9px; }
+
+/* tabs */
+.tabs { max-width: 1400px; margin: 16px auto 0; padding: 0 16px; display: flex; gap: 6px; border-bottom: 1px solid var(--line); }
+.tab { background: transparent; border: 1px solid transparent; border-bottom: none; border-radius: 8px 8px 0 0; padding: 8px 18px;
+  color: var(--dim); font: 600 16px/1.2 Georgia, serif; margin-bottom: -1px; }
+.tab:hover { background: var(--panel); color: var(--text); }
+.tab.on { background: var(--panel); color: var(--gold); border-color: var(--line); border-bottom: 1px solid var(--panel); }
+.tab-page > section:first-child h2 { margin-top: 18px; }

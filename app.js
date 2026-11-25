@@ -15,7 +15,7 @@ const MAX_LEVEL = 8;
 const STORE = "kcdrp-smith-v1";
 const DEFAULTS = {
   buySource: "avg", cap: 450, filler: "coal", ov: {}, excl: [], level: "all", search: "",
-  onlyFit: false, hideNA: true, hideParts: false, sort: { key: "eff", dir: -1 }, cart: [],
+  onlyFit: false, hideNA: true, hideParts: false, sort: { key: "eff", dir: -1 }, cart: [], tab: "items",
 };
 
 let DATA = null;            // data/smithing.json
@@ -530,8 +530,26 @@ function renderPricesDialog() {
     "Для кузнечного сырья она совпадает с игрой, для товаров других ремёсел может отличаться — точное число видно в окне упаковки («Что принести»). «—» — нет данных. Цены сервера без ваших правок.";
 }
 
+// ---------------------------------------------------------------- tabs
+const TABS = ["items", "prices"];
+function showTab(t, push = true) {
+  if (!TABS.includes(t)) t = "items";
+  S.tab = t; save();
+  for (const x of TABS) {
+    $("tab-" + x).hidden = x !== t;
+    const b = document.querySelector(`.tab[data-tab="${x}"]`);
+    if (b) { b.classList.toggle("on", x === t); b.setAttribute("aria-selected", x === t ? "true" : "false"); }
+  }
+  if (push && location.hash !== "#" + t) history.replaceState(null, "", "#" + t);
+}
+
 // ---------------------------------------------------------------- events
 function bind() {
+  const fromHash = location.hash.slice(1);
+  showTab(TABS.includes(fromHash) ? fromHash : S.tab, false);
+  for (const b of document.querySelectorAll(".tab")) b.onclick = () => showTab(b.dataset.tab);
+  window.addEventListener("hashchange", () => showTab(location.hash.slice(1), false));
+  $("cartCount").onclick = () => showTab("items");
   $("buySource").value = S.buySource;
   $("cap").value = S.cap;
   $("search").value = S.search;
