@@ -395,7 +395,7 @@ function cartPlan(fill) {
       const items = Math.min(per, left), value = items * x.P;
       let fillN = 0;
       if (x.fits && fill && cap - value > 1e-9) fillN = Math.ceil((cap - value) / fill.pack - 1e-9);
-      crates.push({ r, items, fill: fillN, value: Math.min(cap, value + fillN * (fill ? fill.pack : 0)), burn: x.fits ? 0 : value - cap });
+      crates.push({ id: l.id, r, items, fill: fillN, value: Math.min(cap, value + fillN * (fill ? fill.pack : 0)), burn: x.fits ? 0 : value - cap });
     }
   }
   // expand the materials you make yourself, deepest first
@@ -476,7 +476,7 @@ function renderCart(fill) {
   // crates
   h += `<h3>По ящикам</h3><ol class="crates">`;
   p.crates.forEach((c, i) => {
-    h += `<li>${esc(c.r.ru || c.r.en)} ×${c.items}${c.fill ? ` + ${esc(fname)} ×${c.fill}` : ""} — ${fmt(c.value)} гр.${c.burn > 0 ? ` <span class="tag burn">сгорит ${fmt(c.burn, 0)}</span>` : ""}</li>`;
+    h += `<li><button type="button" class="crate-del" data-crdel="${esc(c.id)}" data-items="${c.items}" title="Убрать этот ящик">×</button><span class="crate-no">${i + 1}.</span> ${esc(c.r.ru || c.r.en)} ×${c.items}${c.fill ? ` + ${esc(fname)} ×${c.fill}` : ""} — ${fmt(c.value)} гр.${c.burn > 0 ? ` <span class="tag burn">сгорит ${fmt(c.burn, 0)}</span>` : ""}</li>`;
   });
   h += `</ol><p class="cart-actions"><button type="button" id="cartCopy">Скопировать список</button> <button type="button" class="ghost" id="cartClear">Очистить корзину</button> <span id="cartMsg" class="src-tag"></span></p>`;
   box.innerHTML = h;
@@ -574,6 +574,15 @@ function bind() {
   $("cart").addEventListener("click", async (e) => {
     const t = e.target;
     if (t.dataset.cdel) { S.cart = S.cart.filter((l) => l.id !== t.dataset.cdel); save(); render(); }
+    else if (t.dataset.crdel) {
+      // one crate less: its pieces come off that line of the cart
+      const line = S.cart.find((l) => l.id === t.dataset.crdel);
+      if (line) {
+        line.qty = Math.max(0, line.qty - (+t.dataset.items || 0));
+        if (!line.qty) S.cart = S.cart.filter((l) => l !== line);
+        save(); render();
+      }
+    }
     else if (t.dataset.cplus) addToCart(t.dataset.cplus);
     else if (t.id === "cartClear") { if (confirm("Очистить корзину?")) { S.cart = []; save(); render(); } }
     else if (t.id === "cartCopy") {
